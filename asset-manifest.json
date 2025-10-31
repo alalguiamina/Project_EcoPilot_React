@@ -1,0 +1,32 @@
+{
+  "files": {
+    "main.css": "/Project_EcoPilot_React/static/css/main.a91e6f5c.css",
+    "main.js": "/Project_EcoPilot_React/static/js/main.50bced04.js",
+    "static/js/488.eb577831.chunk.js": "/Project_EcoPilot_React/static/js/488.eb577831.chunk.js",
+    "static/media/target.png": "/Project_EcoPilot_React/static/media/target.1f12d23db7d13f6d30e5.png",
+    "static/media/award.png": "/Project_EcoPilot_React/static/media/award.153aeab1f5fe56f65fc3.png",
+    "static/media/settings.png": "/Project_EcoPilot_React/static/media/settings.6f420233a3be1c8394cb.png",
+    "static/media/social.png": "/Project_EcoPilot_React/static/media/social.de5336e0232b5539ec7b.png",
+    "static/media/leaf.png": "/Project_EcoPilot_React/static/media/leaf.6c80ebdbd1c787c18c43.png",
+    "static/media/leaf1.png": "/Project_EcoPilot_React/static/media/leaf1.470126a49574196748b8.png",
+    "static/media/users.png": "/Project_EcoPilot_React/static/media/users.cc0332dbd05f7fd4ff21.png",
+    "static/media/production.png": "/Project_EcoPilot_React/static/media/production.6bdca0856c074280bd83.png",
+    "static/media/bolt.png": "/Project_EcoPilot_React/static/media/bolt.4440275a5bef38787456.png",
+    "static/media/water.png": "/Project_EcoPilot_React/static/media/water.156c1cffea045f59b58b.png",
+    "static/media/report.png": "/Project_EcoPilot_React/static/media/report.cb98048d59256fe68c65.png",
+    "static/media/password.png": "/Project_EcoPilot_React/static/media/password.afd8da6a2989f5778ae4.png",
+    "static/media/chart1.png": "/Project_EcoPilot_React/static/media/chart1.1a6704c9a92b582a98ec.png",
+    "static/media/pen.png": "/Project_EcoPilot_React/static/media/pen.d226aa18c78b2fe5ab2d.png",
+    "static/media/trash.png": "/Project_EcoPilot_React/static/media/trash.cf91f965f769023b84d1.png",
+    "static/media/delete.png": "/Project_EcoPilot_React/static/media/delete.a1c5cf91dbb740dcae22.png",
+    "static/media/chart.png": "/Project_EcoPilot_React/static/media/chart.781ef5a0b21cf67a87a7.png",
+    "index.html": "/Project_EcoPilot_React/index.html",
+    "main.a91e6f5c.css.map": "/Project_EcoPilot_React/static/css/main.a91e6f5c.css.map",
+    "main.50bced04.js.map": "/Project_EcoPilot_React/static/js/main.50bced04.js.map",
+    "488.eb577831.chunk.js.map": "/Project_EcoPilot_React/static/js/488.eb577831.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.a91e6f5c.css",
+    "static/js/main.50bced04.js"
+  ]
+}
