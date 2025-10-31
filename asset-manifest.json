@@ -1,7 +1,7 @@
 {
   "files": {
     "main.css": "/Project_EcoPilot_React/static/css/main.a91e6f5c.css",
-    "main.js": "/Project_EcoPilot_React/static/js/main.50bced04.js",
+    "main.js": "/Project_EcoPilot_React/static/js/main.2dc7848e.js",
     "static/js/488.eb577831.chunk.js": "/Project_EcoPilot_React/static/js/488.eb577831.chunk.js",
     "static/media/target.png": "/Project_EcoPilot_React/static/media/target.1f12d23db7d13f6d30e5.png",
     "static/media/award.png": "/Project_EcoPilot_React/static/media/award.153aeab1f5fe56f65fc3.png",
@@ -22,11 +22,11 @@
     "static/media/chart.png": "/Project_EcoPilot_React/static/media/chart.781ef5a0b21cf67a87a7.png",
     "index.html": "/Project_EcoPilot_React/index.html",
     "main.a91e6f5c.css.map": "/Project_EcoPilot_React/static/css/main.a91e6f5c.css.map",
-    "main.50bced04.js.map": "/Project_EcoPilot_React/static/js/main.50bced04.js.map",
+    "main.2dc7848e.js.map": "/Project_EcoPilot_React/static/js/main.2dc7848e.js.map",
     "488.eb577831.chunk.js.map": "/Project_EcoPilot_React/static/js/488.eb577831.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.a91e6f5c.css",
-    "static/js/main.50bced04.js"
+    "static/js/main.2dc7848e.js"
   ]
 }
