@@ -8,10 +8,10 @@ import CarbonFootprintPage from "./Components/CarbonFootprintPage/CarbonFootprin
 import ESGIndicatorsPage from "./Components/ESGIndicatorsPage/ESGIndicatorsPage";
 import ProtectedRoute from "./Components/ProtectedRoute/ProtectedRoute";
 
-type User = Record<string, unknown>;
+export type User = { role: "AgentSaisie" | "User" | "SuperUser" | "Admin" };
 
 const App = () => {
-  const [user] = useState<User | null>(null);
+  const [user] = useState<User>({ role: "AgentSaisie" });
 
   return (
     <Router basename={process.env.PUBLIC_URL}>
@@ -25,11 +25,18 @@ const App = () => {
             path="/dashboard"
             element={
               <ProtectedRoute user={user}>
-                <Dashboard />
+                <Dashboard user={user} />
               </ProtectedRoute>
             }
           />
-          <Route path="/data-entry" element={<DataEntryPage />} />
+          <Route
+            path="/data-entry"
+            element={
+              <ProtectedRoute user={user}>
+                <DataEntryPage user={user} />
+              </ProtectedRoute>
+            }
+          />
           <Route
             path="/carbon"
             element={

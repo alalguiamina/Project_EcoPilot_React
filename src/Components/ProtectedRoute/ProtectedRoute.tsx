@@ -1,16 +1,19 @@
-import { ReactNode } from "react";
+import { User } from "App";
+import { useNavigate } from "react-router-dom";
 
 type ProtectedRouteProps = {
-  user: unknown | null;
-  children: ReactNode;
+  user: User;
+  children: React.ReactElement;
 };
 
 const ProtectedRoute = ({ user, children }: ProtectedRouteProps) => {
-  if (user == null) {
+  const navigate = useNavigate();
+  if (!user) {
+    navigate("/login");
     return null;
+  } else {
+    return children;
   }
-
-  return <>{children}</>;
 };
 
 export default ProtectedRoute;

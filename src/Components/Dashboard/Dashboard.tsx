@@ -1,5 +1,4 @@
 import { useNavigate } from "react-router-dom";
-import Sidebar from "../Sidebar/Sidebar";
 import "./Dashboard.css";
 import {
   PieChart,
@@ -24,10 +23,10 @@ import chart1Icon from "../Assests/chart1.png";
 import usersIcon from "../Assests/users.png";
 import awardIcon from "../Assests/award.png";
 import KpiCard from "../KpiCard/KpiCard";
+import Sidebar from "Components/Sidebar/Sidebar";
+import { User } from "App";
 
-type DashboardProps = {
-  userLevel?: string;
-};
+type DashboardProps = { user: User };
 
 type PieDatum = {
   name: string;
@@ -80,9 +79,38 @@ const emissionsData: EmissionDatum[] = [
   { mois: "Juin", emissions: 950 },
 ];
 
-const Dashboard = ({ userLevel }: DashboardProps) => {
-  console.log(userLevel);
+const kpiCardsData = [
+  {
+    label: "Score RSE Global",
+    value: "87/100",
+    subtitle: "+5 pts ce mois",
+    icon: awardIcon,
+    color: "green",
+  },
+  {
+    label: "Bilan Carbone",
+    value: "950 tCO₂e",
+    subtitle: "-8% vs mois dernier",
+    icon: leafIcon,
+    color: "emerald",
+  },
+  {
+    label: "Indicateurs ESG",
+    value: "42/50",
+    subtitle: "84% de conformité",
+    icon: chart1Icon,
+    color: "blue",
+  },
+  {
+    label: "Collaborateurs formés",
+    value: "324",
+    subtitle: "Sur 380 employés",
+    icon: usersIcon,
+    color: "purple",
+  },
+];
 
+const Dashboard = ({ user }: DashboardProps) => {
   const navigate = useNavigate();
   const handleLogout = () => navigate("/");
 
@@ -108,34 +136,17 @@ const Dashboard = ({ userLevel }: DashboardProps) => {
           {/* KPI Cards */}
 
           <div className="kpi-cards-grid">
-            <KpiCard
-              label="Score RSE Global"
-              value="87/100"
-              subtitle="+5 pts ce mois"
-              icon={awardIcon}
-              color="green"
-            />
-            <KpiCard
-              label="Bilan Carbone"
-              value="950 tCO₂e"
-              subtitle="-8% vs mois dernier"
-              icon={leafIcon}
-              color="emerald"
-            />
-            <KpiCard
-              label="Indicateurs ESG"
-              value="42/50"
-              subtitle="84% de conformité"
-              icon={chart1Icon}
-              color="blue"
-            />
-            <KpiCard
-              label="Collaborateurs formés"
-              value="324"
-              subtitle="Sur 380 employés"
-              icon={usersIcon}
-              color="purple"
-            />
+            {kpiCardsData.map((item) => {
+              return (
+                <KpiCard
+                  label={item.label}
+                  value={item.value}
+                  subtitle={item.subtitle}
+                  icon={item.icon}
+                  color={item.color}
+                />
+              );
+            })}
           </div>
 
           {/* Charts Grid */}

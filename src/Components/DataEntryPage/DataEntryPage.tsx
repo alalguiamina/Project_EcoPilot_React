@@ -10,6 +10,7 @@ import deleteIcon from "../Assests/delete.png";
 import YearDataEntry from "Components/YearDataEntry/YearDataEntry";
 import MonthDataEntry from "Components/MonthDataEntry/MonthDataEntry";
 import SiteDataEntry from "Components/SiteDataEntry/SiteDataEntry";
+import { User } from "App";
 
 type CategoryId = "energie" | "eau" | "dechets" | "social" | "production";
 
@@ -66,7 +67,7 @@ type DataEntryRecord = {
   category: string;
 } & Record<string, string | number>;
 
-function DataEntryPage() {
+function DataEntryPage({ user }: { user: User }) {
   const [selectedCategory, setSelectedCategory] = useState<CategoryId | "">("");
   const [entries, setEntries] = useState<DataEntryRecord[]>([]);
   const [saved, setSaved] = useState(false);
