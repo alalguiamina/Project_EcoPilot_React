@@ -88,7 +88,7 @@ const Dashboard = ({ userLevel }: DashboardProps) => {
 
   return (
     <div className="dashboard-wrapper">
-      <Sidebar chose={"ma3loma"} />
+      <Sidebar />
 
       <div className="dashboard-content">
         <header className="topbar">

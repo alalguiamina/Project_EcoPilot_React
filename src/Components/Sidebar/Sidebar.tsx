@@ -9,10 +9,6 @@ import reportIcon from "../Assests/report.png";
 import settingsIcon from "../Assests/settings.png";
 import logo from "../Assests/logo.png";
 
-type SidebarProps = {
-  chose?: string;
-};
-
 type MenuItem = {
   id: string;
   label: string;
@@ -21,7 +17,7 @@ type MenuItem = {
   path: string;
 };
 
-const Sidebar = (_props: SidebarProps) => {
+const Sidebar = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
