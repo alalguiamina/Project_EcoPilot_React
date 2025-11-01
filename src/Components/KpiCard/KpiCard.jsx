@@ -1,4 +1,3 @@
-import awardIcon from "../Assests/award.png";
 function KpiCard({ label, value, subtitle, icon, color }) {
   return (
     <div className="card kpi-card">
