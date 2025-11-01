@@ -34,8 +34,8 @@ export const Login = () => {
       <div className="inputs">
         <div className="input">
           <img src={emailIcon} alt="email icon" />
-          <input 
-            type="email" 
+          <input
+            type="email"
             placeholder="Email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
@@ -45,8 +45,8 @@ export const Login = () => {
 
         <div className="input">
           <img src={passwordIcon} alt="password icon" />
-          <input 
-            type="password" 
+          <input
+            type="password"
             placeholder="Password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}

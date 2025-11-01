@@ -34,13 +34,7 @@ type GouvernanceDatum = {
   audits: number;
 };
 
-type SectionKey =
-  | "energie"
-  | "eau"
-  | "dechets"
-  | "sociale"
-  | "societale"
-  | "gouvernance";
+type SectionKey = "energie" | "eau" | "dechets" | "sociale" | "societale" | "gouvernance";
 
 type ChartDatum = Record<string, number | string>;
 
@@ -50,9 +44,7 @@ const getNumericValue = (datum: ChartDatum, key: string) => {
 };
 
 function ESGIndicatorsPage() {
-  const [expandedSection, setExpandedSection] = useState<SectionKey | null>(
-    null
-  );
+  const [expandedSection, setExpandedSection] = useState<SectionKey | null>(null);
 
   // Données pour Gestion de l'énergie
   const energieData: EnergyDatum[] = [
@@ -133,21 +125,14 @@ function ESGIndicatorsPage() {
     const padding = 40;
     const chartWidth = width - 2 * padding;
     const chartHeight = height - 2 * padding;
-    
+
     const maxValue = Math.max(
-      ...data.map((datum) =>
-        Math.max(
-          getNumericValue(datum, key1),
-          getNumericValue(datum, key2)
-        )
-      )
+      ...data.map((datum) => Math.max(getNumericValue(datum, key1), getNumericValue(datum, key2)))
     );
-    
-    const xScale = (index: number) =>
-      padding + (index / (data.length - 1)) * chartWidth;
-    const yScale = (value: number) =>
-      padding + chartHeight - (value / maxValue) * chartHeight;
-    
+
+    const xScale = (index: number) => padding + (index / (data.length - 1)) * chartWidth;
+    const yScale = (value: number) => padding + chartHeight - (value / maxValue) * chartHeight;
+
     return (
       <div className="line-chart-container">
         <svg width={width} height={height}>
@@ -163,11 +148,17 @@ function ESGIndicatorsPage() {
               strokeDasharray="3 3"
             />
           ))}
-          
+
           {/* X and Y axis */}
-          <line x1={padding} y1={height - padding} x2={width - padding} y2={height - padding} stroke="#94a3b8" />
+          <line
+            x1={padding}
+            y1={height - padding}
+            x2={width - padding}
+            y2={height - padding}
+            stroke="#94a3b8"
+          />
           <line x1={padding} y1={padding} x2={padding} y2={height - padding} stroke="#94a3b8" />
-          
+
           {/* X axis labels */}
           {data.map((datum, index) => (
             <text
@@ -181,7 +172,7 @@ function ESGIndicatorsPage() {
               {datum.mois}
             </text>
           ))}
-          
+
           {/* Y axis labels */}
           {[0, 0.25, 0.5, 0.75, 1].map((i) => (
             <text
@@ -196,7 +187,7 @@ function ESGIndicatorsPage() {
               {Math.round(maxValue * (1 - i))}
             </text>
           ))}
-          
+
           {/* First line */}
           <polyline
             points={data
@@ -209,7 +200,7 @@ function ESGIndicatorsPage() {
             stroke={color1}
             strokeWidth="2"
           />
-          
+
           {/* First line points */}
           {data.map((datum, index) => {
             const value = getNumericValue(datum, key1);
@@ -223,7 +214,7 @@ function ESGIndicatorsPage() {
               />
             );
           })}
-          
+
           {/* Second line */}
           <polyline
             points={data
@@ -237,7 +228,7 @@ function ESGIndicatorsPage() {
             strokeWidth="2"
             strokeDasharray="5 5"
           />
-          
+
           {/* Second line points */}
           {data.map((datum, index) => {
             const value = getNumericValue(datum, key2);
@@ -252,14 +243,17 @@ function ESGIndicatorsPage() {
             );
           })}
         </svg>
-        
+
         <div className="chart-legend">
           <div className="legend-item">
             <div className="legend-line" style={{ backgroundColor: color1 }}></div>
             <span>{name1}</span>
           </div>
           <div className="legend-item">
-            <div className="legend-line" style={{ backgroundColor: color2, borderStyle: 'dashed' }}></div>
+            <div
+              className="legend-line"
+              style={{ backgroundColor: color2, borderStyle: "dashed" }}
+            ></div>
             <span>{name2}</span>
           </div>
         </div>
@@ -282,16 +276,11 @@ function ESGIndicatorsPage() {
     const padding = { top: 20, right: 40, bottom: 60, left: 60 };
     const chartWidth = width - padding.left - padding.right;
     const chartHeight = height - padding.top - padding.bottom;
-    
+
     const maxValue = Math.max(
-      ...data.map((datum) =>
-        Math.max(
-          getNumericValue(datum, key1),
-          getNumericValue(datum, key2)
-        )
-      )
+      ...data.map((datum) => Math.max(getNumericValue(datum, key1), getNumericValue(datum, key2)))
     );
-    
+
     return (
       <div className="bar-chart-container">
         <svg width={width} height={height}>
@@ -307,11 +296,23 @@ function ESGIndicatorsPage() {
               strokeDasharray="3 3"
             />
           ))}
-          
+
           {/* X and Y axis */}
-          <line x1={padding.left} y1={height - padding.bottom} x2={width - padding.right} y2={height - padding.bottom} stroke="#94a3b8" />
-          <line x1={padding.left} y1={padding.top} x2={padding.left} y2={height - padding.bottom} stroke="#94a3b8" />
-          
+          <line
+            x1={padding.left}
+            y1={height - padding.bottom}
+            x2={width - padding.right}
+            y2={height - padding.bottom}
+            stroke="#94a3b8"
+          />
+          <line
+            x1={padding.left}
+            y1={padding.top}
+            x2={padding.left}
+            y2={height - padding.bottom}
+            stroke="#94a3b8"
+          />
+
           {/* Y axis labels */}
           {[0, 0.25, 0.5, 0.75, 1].map((i) => (
             <text
@@ -326,7 +327,7 @@ function ESGIndicatorsPage() {
               {Math.round(maxValue * i)}
             </text>
           ))}
-          
+
           {/* Bars and X axis labels */}
           {data.map((datum, index) => {
             const value1 = getNumericValue(datum, key1);
@@ -335,29 +336,17 @@ function ESGIndicatorsPage() {
             const bar1Y = height - padding.bottom - bar1Height;
             const bar2Height = (value2 / maxValue) * chartHeight;
             const bar2Y = height - padding.bottom - bar2Height;
-            
+
             const slotWidth = chartWidth / data.length;
             const barX = padding.left + (index + 0.5) * slotWidth;
             const barWidth = (chartWidth / data.length) * 0.3;
             const bar1X = barX - barWidth;
             const bar2X = barX;
-            
+
             return (
               <g key={index}>
-                <rect
-                  x={bar1X}
-                  y={bar1Y}
-                  width={barWidth}
-                  height={bar1Height}
-                  fill={color1}
-                />
-                <rect
-                  x={bar2X}
-                  y={bar2Y}
-                  width={barWidth}
-                  height={bar2Height}
-                  fill={color2}
-                />
+                <rect x={bar1X} y={bar1Y} width={barWidth} height={bar1Height} fill={color1} />
+                <rect x={bar2X} y={bar2Y} width={barWidth} height={bar2Height} fill={color2} />
                 <text
                   x={barX}
                   y={height - padding.bottom + 20}
@@ -371,7 +360,7 @@ function ESGIndicatorsPage() {
             );
           })}
         </svg>
-        
+
         <div className="chart-legend">
           <div className="legend-item">
             <div className="legend-color" style={{ backgroundColor: color1 }}></div>
@@ -401,21 +390,14 @@ function ESGIndicatorsPage() {
     const padding = 40;
     const chartWidth = width - 2 * padding;
     const chartHeight = height - 2 * padding;
-    
-    const maxLeft = Math.max(
-      ...data.map((datum) => getNumericValue(datum, key1))
-    );
-    const maxRight = Math.max(
-      ...data.map((datum) => getNumericValue(datum, key2))
-    );
-    
-    const xScale = (index: number) =>
-      padding + (index / (data.length - 1)) * chartWidth;
-    const yScaleLeft = (value: number) =>
-      padding + chartHeight - (value / maxLeft) * chartHeight;
-    const yScaleRight = (value: number) =>
-      padding + chartHeight - (value / maxRight) * chartHeight;
-    
+
+    const maxLeft = Math.max(...data.map((datum) => getNumericValue(datum, key1)));
+    const maxRight = Math.max(...data.map((datum) => getNumericValue(datum, key2)));
+
+    const xScale = (index: number) => padding + (index / (data.length - 1)) * chartWidth;
+    const yScaleLeft = (value: number) => padding + chartHeight - (value / maxLeft) * chartHeight;
+    const yScaleRight = (value: number) => padding + chartHeight - (value / maxRight) * chartHeight;
+
     return (
       <div className="line-chart-container">
         <svg width={width} height={height}>
@@ -431,12 +413,24 @@ function ESGIndicatorsPage() {
               strokeDasharray="3 3"
             />
           ))}
-          
+
           {/* X and Y axis */}
-          <line x1={padding} y1={height - padding} x2={width - padding} y2={height - padding} stroke="#94a3b8" />
+          <line
+            x1={padding}
+            y1={height - padding}
+            x2={width - padding}
+            y2={height - padding}
+            stroke="#94a3b8"
+          />
           <line x1={padding} y1={padding} x2={padding} y2={height - padding} stroke="#94a3b8" />
-          <line x1={width - padding} y1={padding} x2={width - padding} y2={height - padding} stroke="#94a3b8" />
-          
+          <line
+            x1={width - padding}
+            y1={padding}
+            x2={width - padding}
+            y2={height - padding}
+            stroke="#94a3b8"
+          />
+
           {/* X axis labels */}
           {data.map((datum, index) => (
             <text
@@ -450,7 +444,7 @@ function ESGIndicatorsPage() {
               {datum.mois}
             </text>
           ))}
-          
+
           {/* Left Y axis labels */}
           {[0, 0.25, 0.5, 0.75, 1].map((i) => (
             <text
@@ -465,7 +459,7 @@ function ESGIndicatorsPage() {
               {Math.round(maxLeft * (1 - i))}
             </text>
           ))}
-          
+
           {/* Right Y axis labels */}
           {[0, 0.25, 0.5, 0.75, 1].map((i) => (
             <text
@@ -480,7 +474,7 @@ function ESGIndicatorsPage() {
               {Math.round(maxRight * (1 - i))}
             </text>
           ))}
-          
+
           {/* First line */}
           <polyline
             points={data
@@ -493,7 +487,7 @@ function ESGIndicatorsPage() {
             stroke={color1}
             strokeWidth="2"
           />
-          
+
           {/* First line points */}
           {data.map((datum, index) => {
             const value = getNumericValue(datum, key1);
@@ -507,7 +501,7 @@ function ESGIndicatorsPage() {
               />
             );
           })}
-          
+
           {/* Second line */}
           <polyline
             points={data
@@ -520,7 +514,7 @@ function ESGIndicatorsPage() {
             stroke={color2}
             strokeWidth="2"
           />
-          
+
           {/* Second line points */}
           {data.map((datum, index) => {
             const value = getNumericValue(datum, key2);
@@ -535,7 +529,7 @@ function ESGIndicatorsPage() {
             );
           })}
         </svg>
-        
+
         <div className="chart-legend">
           <div className="legend-item">
             <div className="legend-line" style={{ backgroundColor: color1 }}></div>
@@ -559,10 +553,7 @@ function ESGIndicatorsPage() {
   const ProgressBar = ({ value, className = "" }: ProgressBarProps) => {
     return (
       <div className={`progress-bar ${className}`.trim()}>
-        <div 
-          className="progress-fill" 
-          style={{ width: `${value}%` }}
-        ></div>
+        <div className="progress-fill" style={{ width: `${value}%` }}></div>
       </div>
     );
   };
@@ -642,10 +633,7 @@ function ESGIndicatorsPage() {
 
             {/* Gestion de l'énergie */}
             <div className="expandable-card">
-              <button
-                onClick={() => toggleSection('energie')}
-                className="expandable-header"
-              >
+              <button onClick={() => toggleSection("energie")} className="expandable-header">
                 <div className="expandable-title">
                   <div className="icon-container yellow">
                     <span className="icon">⚡</span>
@@ -658,13 +646,11 @@ function ESGIndicatorsPage() {
                 <div className="expandable-metrics">
                   <div className="metric-value yellow">10,900 kWh</div>
                   <p className="metric-label">Ce mois</p>
-                  <span className="expand-icon">
-                    {expandedSection === 'energie' ? '▲' : '▼'}
-                  </span>
+                  <span className="expand-icon">{expandedSection === "energie" ? "▲" : "▼"}</span>
                 </div>
               </button>
-              
-              {expandedSection === 'energie' && (
+
+              {expandedSection === "energie" && (
                 <div className="expandable-content">
                   <div className="metrics-grid">
                     <div className="metric-card yellow">
@@ -694,13 +680,13 @@ function ESGIndicatorsPage() {
                   </div>
 
                   {renderLineChart(
-                    energieData, 
-                    '#eab308', 
-                    '#64748b', 
-                    'consommation', 
-                    'objectif', 
-                    'Consommation', 
-                    'Objectif'
+                    energieData,
+                    "#eab308",
+                    "#64748b",
+                    "consommation",
+                    "objectif",
+                    "Consommation",
+                    "Objectif"
                   )}
                 </div>
               )}
@@ -708,10 +694,7 @@ function ESGIndicatorsPage() {
 
             {/* Gestion de l'eau */}
             <div className="expandable-card">
-              <button
-                onClick={() => toggleSection('eau')}
-                className="expandable-header"
-              >
+              <button onClick={() => toggleSection("eau")} className="expandable-header">
                 <div className="expandable-title">
                   <div className="icon-container blue">
                     <span className="icon">💧</span>
@@ -724,13 +707,11 @@ function ESGIndicatorsPage() {
                 <div className="expandable-metrics">
                   <div className="metric-value blue">7,000 m³</div>
                   <p className="metric-label">Ce mois</p>
-                  <span className="expand-icon">
-                    {expandedSection === 'eau' ? '▲' : '▼'}
-                  </span>
+                  <span className="expand-icon">{expandedSection === "eau" ? "▲" : "▼"}</span>
                 </div>
               </button>
-              
-              {expandedSection === 'eau' && (
+
+              {expandedSection === "eau" && (
                 <div className="expandable-content">
                   <div className="metrics-grid">
                     <div className="metric-card blue">
@@ -760,13 +741,13 @@ function ESGIndicatorsPage() {
                   </div>
 
                   {renderBarChart(
-                    eauData, 
-                    '#3b82f6', 
-                    '#94a3b8', 
-                    'consommation', 
-                    'objectif', 
-                    'Consommation', 
-                    'Objectif'
+                    eauData,
+                    "#3b82f6",
+                    "#94a3b8",
+                    "consommation",
+                    "objectif",
+                    "Consommation",
+                    "Objectif"
                   )}
                 </div>
               )}
@@ -774,10 +755,7 @@ function ESGIndicatorsPage() {
 
             {/* Gestion des déchets */}
             <div className="expandable-card">
-              <button
-                onClick={() => toggleSection('dechets')}
-                className="expandable-header"
-              >
+              <button onClick={() => toggleSection("dechets")} className="expandable-header">
                 <div className="expandable-title">
                   <div className="icon-container green">
                     <span className="icon">♻️</span>
@@ -790,13 +768,11 @@ function ESGIndicatorsPage() {
                 <div className="expandable-metrics">
                   <div className="metric-value green">90%</div>
                   <p className="metric-label">Taux recyclage</p>
-                  <span className="expand-icon">
-                    {expandedSection === 'dechets' ? '▲' : '▼'}
-                  </span>
+                  <span className="expand-icon">{expandedSection === "dechets" ? "▲" : "▼"}</span>
                 </div>
               </button>
-              
-              {expandedSection === 'dechets' && (
+
+              {expandedSection === "dechets" && (
                 <div className="expandable-content">
                   <div className="metrics-grid">
                     <div className="metric-card green">
@@ -826,13 +802,13 @@ function ESGIndicatorsPage() {
                   </div>
 
                   {renderLineChart(
-                    dechetsData, 
-                    '#16a34a', 
-                    '#64748b', 
-                    'recycles', 
-                    'objectif', 
-                    'Recyclés %', 
-                    'Objectif %'
+                    dechetsData,
+                    "#16a34a",
+                    "#64748b",
+                    "recycles",
+                    "objectif",
+                    "Recyclés %",
+                    "Objectif %"
                   )}
                 </div>
               )}
@@ -848,10 +824,7 @@ function ESGIndicatorsPage() {
 
             {/* Sociale */}
             <div className="expandable-card">
-              <button
-                onClick={() => toggleSection('sociale')}
-                className="expandable-header"
-              >
+              <button onClick={() => toggleSection("sociale")} className="expandable-header">
                 <div className="expandable-title">
                   <div className="icon-container blue">
                     <span className="icon">❤️</span>
@@ -864,13 +837,11 @@ function ESGIndicatorsPage() {
                 <div className="expandable-metrics">
                   <div className="metric-value blue">88%</div>
                   <p className="metric-label">Employés formés</p>
-                  <span className="expand-icon">
-                    {expandedSection === 'sociale' ? '▲' : '▼'}
-                  </span>
+                  <span className="expand-icon">{expandedSection === "sociale" ? "▲" : "▼"}</span>
                 </div>
               </button>
-              
-              {expandedSection === 'sociale' && (
+
+              {expandedSection === "sociale" && (
                 <div className="expandable-content">
                   <div className="metrics-grid">
                     <div className="metric-card blue">
@@ -894,13 +865,13 @@ function ESGIndicatorsPage() {
                   </div>
 
                   {renderBarChart(
-                    socialeData, 
-                    '#3b82f6', 
-                    '#8b5cf6', 
-                    'formation', 
-                    'securite', 
-                    'Formation %', 
-                    'Sécurité %'
+                    socialeData,
+                    "#3b82f6",
+                    "#8b5cf6",
+                    "formation",
+                    "securite",
+                    "Formation %",
+                    "Sécurité %"
                   )}
                 </div>
               )}
@@ -908,10 +879,7 @@ function ESGIndicatorsPage() {
 
             {/* Sociétale */}
             <div className="expandable-card">
-              <button
-                onClick={() => toggleSection('societale')}
-                className="expandable-header"
-              >
+              <button onClick={() => toggleSection("societale")} className="expandable-header">
                 <div className="expandable-title">
                   <div className="icon-container cyan">
                     <span className="icon">🌍</span>
@@ -924,13 +892,11 @@ function ESGIndicatorsPage() {
                 <div className="expandable-metrics">
                   <div className="metric-value cyan">650</div>
                   <p className="metric-label">Bénéficiaires</p>
-                  <span className="expand-icon">
-                    {expandedSection === 'societale' ? '▲' : '▼'}
-                  </span>
+                  <span className="expand-icon">{expandedSection === "societale" ? "▲" : "▼"}</span>
                 </div>
               </button>
-              
-              {expandedSection === 'societale' && (
+
+              {expandedSection === "societale" && (
                 <div className="expandable-content">
                   <div className="metrics-grid">
                     <div className="metric-card cyan">
@@ -954,13 +920,13 @@ function ESGIndicatorsPage() {
                   </div>
 
                   {renderDualAxisChart(
-                    societaleData, 
-                    '#06b6d4', 
-                    '#0284c7', 
-                    'impact', 
-                    'beneficiaires', 
-                    'Impact %', 
-                    'Bénéficiaires'
+                    societaleData,
+                    "#06b6d4",
+                    "#0284c7",
+                    "impact",
+                    "beneficiaires",
+                    "Impact %",
+                    "Bénéficiaires"
                   )}
                 </div>
               )}
@@ -975,10 +941,7 @@ function ESGIndicatorsPage() {
             </h2>
 
             <div className="expandable-card">
-              <button
-                onClick={() => toggleSection('gouvernance')}
-                className="expandable-header"
-              >
+              <button onClick={() => toggleSection("gouvernance")} className="expandable-header">
                 <div className="expandable-title">
                   <div className="icon-container purple">
                     <span className="icon">🏢</span>
@@ -992,12 +955,12 @@ function ESGIndicatorsPage() {
                   <div className="metric-value purple">96%</div>
                   <p className="metric-label">Conformité</p>
                   <span className="expand-icon">
-                    {expandedSection === 'gouvernance' ? '▲' : '▼'}
+                    {expandedSection === "gouvernance" ? "▲" : "▼"}
                   </span>
                 </div>
               </button>
-              
-              {expandedSection === 'gouvernance' && (
+
+              {expandedSection === "gouvernance" && (
                 <div className="expandable-content">
                   <div className="metrics-grid">
                     <div className="metric-card purple">
@@ -1024,13 +987,13 @@ function ESGIndicatorsPage() {
                   </div>
 
                   {renderDualAxisChart(
-                    gouvernanceData, 
-                    '#8b5cf6', 
-                    '#a855f7', 
-                    'conformite', 
-                    'audits', 
-                    'Conformité %', 
-                    'Audits'
+                    gouvernanceData,
+                    "#8b5cf6",
+                    "#a855f7",
+                    "conformite",
+                    "audits",
+                    "Conformité %",
+                    "Audits"
                   )}
 
                   <div className="governance-metrics">

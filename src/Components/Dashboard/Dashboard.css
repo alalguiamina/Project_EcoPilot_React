@@ -10,7 +10,7 @@
   height: 100vh;
   overflow: hidden;
   background: #f8fafc;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", sans-serif;
 }
 
 .dashboard-content {
@@ -129,15 +129,15 @@
 
 /* ==================== KPI ICONS ==================== */
 .kpi-icon {
-  width: 22px;        /* PNG icon size */
+  width: 22px; /* PNG icon size */
   height: 22px;
-  object-fit: contain; 
+  object-fit: contain;
   display: inline-block;
   opacity: 0.9;
 }
 
 .kpi-card-header .kpi-icon {
-  font-size: unset;   /* prevent emoji override */
+  font-size: unset; /* prevent emoji override */
 }
 
 /* ==================== FILTERS SECTION ==================== */
@@ -275,7 +275,7 @@
 }
 
 .chart-container {
-  min-height: 220px;           /* ensures charts are visible */
+  min-height: 220px; /* ensures charts are visible */
   display: flex;
   align-items: center;
   justify-content: center;
@@ -422,11 +422,11 @@
     margin-left: 200px;
     width: calc(100vw - 200px);
   }
-  
+
   .kpi-cards-grid {
     grid-template-columns: repeat(2, 1fr);
   }
-  
+
   .filters-grid-5 {
     grid-template-columns: repeat(2, 1fr);
   }
@@ -437,30 +437,30 @@
     margin-left: 0;
     width: 100vw;
   }
-  
+
   .main-dashboard {
     padding: 12px;
     height: calc(100vh - 60px);
   }
-  
+
   .topbar {
     padding: 12px 16px;
   }
-  
+
   .topbar-title {
     font-size: 18px;
   }
-  
+
   .user-badge {
     display: none;
   }
-  
+
   .filters-grid-5,
   .kpi-cards-grid,
   .charts-2-col {
     grid-template-columns: 1fr;
   }
-  
+
   .card-header,
   .card-content {
     padding: 16px;

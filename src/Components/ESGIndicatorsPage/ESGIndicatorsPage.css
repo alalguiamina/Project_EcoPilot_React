@@ -10,7 +10,7 @@
   height: 100vh;
   overflow: hidden;
   background: #f8fafc;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", sans-serif;
 }
 
 .dashboard-content {
@@ -481,7 +481,8 @@
 }
 
 /* ==================== CHARTS ==================== */
-.line-chart-container, .bar-chart-container {
+.line-chart-container,
+.bar-chart-container {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -541,7 +542,7 @@
   .score-cards-grid {
     grid-template-columns: repeat(2, 1fr);
   }
-  
+
   .metrics-grid {
     grid-template-columns: repeat(2, 1fr);
   }
@@ -559,7 +560,7 @@
     margin-left: 0;
     width: 100vw;
   }
-  
+
   .esg-indicators-page {
     padding: 16px;
   }
@@ -571,21 +572,21 @@
   .score-cards-grid {
     grid-template-columns: 1fr;
   }
-  
+
   .metrics-grid {
     grid-template-columns: 1fr;
   }
-  
+
   .governance-metrics {
     grid-template-columns: 1fr;
   }
-  
+
   .expandable-header {
     flex-direction: column;
     align-items: flex-start;
     gap: 16px;
   }
-  
+
   .expandable-metrics {
     align-items: flex-start;
   }

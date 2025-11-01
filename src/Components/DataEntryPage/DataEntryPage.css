@@ -10,7 +10,7 @@
   height: 100vh;
   overflow: hidden;
   background: #f8fafc;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", sans-serif;
 }
 
 .dashboard-content {
@@ -331,7 +331,6 @@
   max-width: fit-content; /* Make the message only as wide as its content */
 }
 
-
 .success-message span {
   font-size: 20px;
 }
@@ -339,12 +338,12 @@
 /* ==================== RESPONSIVE ==================== */
 @media (max-width: 768px) {
   /* ... existing responsive styles ... */
-  
+
   /* Ensure centering is maintained on mobile */
   .card-content {
     align-items: center;
   }
-  
+
   .form-grid {
     width: 100%;
   }
@@ -355,7 +354,7 @@
     margin-left: 200px;
     width: calc(100vw - 200px);
   }
-  
+
   .category-btn {
     min-width: 140px;
     padding: 20px;
@@ -367,7 +366,7 @@
     margin-left: 0;
     width: 100vw;
   }
-  
+
   .data-entry-page {
     padding: 16px;
   }

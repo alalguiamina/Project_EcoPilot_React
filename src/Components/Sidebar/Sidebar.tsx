@@ -118,6 +118,6 @@ const Sidebar = (_props: SidebarProps) => {
       </nav>
     </aside>
   );
-}
+};
 
 export default Sidebar;

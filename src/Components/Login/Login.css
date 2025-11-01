@@ -1,5 +1,6 @@
 /* === Page entière === */
-body, html {
+body,
+html {
   height: 100%;
   margin: 0;
   padding: 0;
@@ -26,13 +27,12 @@ body, html {
   transform: scale(0.9); /* légère mise à l’échelle */
 }
 .logo {
-  width: 180px;         /* ajuste la taille selon ton image */
+  width: 180px; /* ajuste la taille selon ton image */
   height: auto;
   margin-top: 20px;
   margin-bottom: 30px;
   object-fit: contain;
 }
-
 
 /* === En-tête === */
 .header {
@@ -50,14 +50,20 @@ body, html {
 .underline {
   width: 80px;
   height: 5px;
-  background: linear-gradient(90deg, #679436, #A4BD01);
+  background: linear-gradient(90deg, #679436, #a4bd01);
   border-radius: 2px;
   animation: underlineSlide 1.5s infinite alternate ease-in-out;
 }
 
 @keyframes underlineSlide {
-  from { width: 60px; opacity: 0.8; }
-  to { width: 100px; opacity: 1; }
+  from {
+    width: 60px;
+    opacity: 0.8;
+  }
+  to {
+    width: 100px;
+    opacity: 1;
+  }
 }
 
 /* === Inputs === */
@@ -103,7 +109,7 @@ body, html {
 }
 
 .forgot-password span {
-  color: #A4BD01;
+  color: #a4bd01;
   cursor: pointer;
   font-weight: 600;
 }
@@ -128,10 +134,12 @@ body, html {
   font-size: 22px;
   font-weight: 700;
   cursor: pointer;
-  transition: background 0.3s ease, transform 0.2s ease;
+  transition:
+    background 0.3s ease,
+    transform 0.2s ease;
 }
 
 .submit:hover {
-  background: #427AA1;
+  background: #427aa1;
   transform: scale(1.03);
 }

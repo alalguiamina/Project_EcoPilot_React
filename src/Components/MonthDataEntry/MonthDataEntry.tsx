@@ -30,10 +30,7 @@ function MonthDataEntry<T extends MonthDataShape>({
         {label}
         {required && " *"}
       </label>
-      <select
-        value={data.mois}
-        onChange={(e) => setData({ ...data, mois: e.target.value })}
-      >
+      <select value={data.mois} onChange={(e) => setData({ ...data, mois: e.target.value })}>
         <option value="">Sélectionner</option>
         {mois.map((m) => (
           <option key={m.value} value={m.value}>
