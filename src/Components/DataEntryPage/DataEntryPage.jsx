@@ -7,7 +7,9 @@ import waterIcon from "../Assests/water.png";
 import productionIcon from "../Assests/production.png";
 import socialIcon from "../Assests/social.png";
 import deleteIcon from "../Assests/delete.png";
-
+import YearDataEntry from "Components/YearDataEntry/YearDataEntry";
+import MonthDataEntry from "Components/MonthDataEntry/MonthDataEntry";
+import SiteDataEntry from "Components/SiteDataEntry/SiteDataEntry";
 function DataEntryPage() {
   const [selectedCategory, setSelectedCategory] = useState("");
   const [entries, setEntries] = useState([]);
@@ -306,62 +308,21 @@ function DataEntryPage() {
                 {/* Formulaire Énergie */}
                 {selectedCategory === "energie" && (
                   <div className="form-grid">
-                    <div className="form-group">
-                      <label>Année</label>
-                      <select
-                        value={energieData.annee}
-                        onChange={(e) =>
-                          setEnergieData({
-                            ...energieData,
-                            annee: e.target.value,
-                          })
-                        }
-                      >
-                        <option value="2025">2025</option>
-                        <option value="2024">2024</option>
-                        <option value="2023">2023</option>
-                      </select>
-                    </div>
+                    <YearDataEntry
+                      data={energieData}
+                      setData={setEnergieData}
+                    />
 
-                    <div className="form-group">
-                      <label>Mois *</label>
-                      <select
-                        value={energieData.mois}
-                        onChange={(e) =>
-                          setEnergieData({
-                            ...energieData,
-                            mois: e.target.value,
-                          })
-                        }
-                      >
-                        <option value="">Sélectionner</option>
-                        {mois.map((m) => (
-                          <option key={m.value} value={m.value}>
-                            {m.label}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-
-                    <div className="form-group">
-                      <label>Site *</label>
-                      <select
-                        value={energieData.site}
-                        onChange={(e) =>
-                          setEnergieData({
-                            ...energieData,
-                            site: e.target.value,
-                          })
-                        }
-                      >
-                        <option value="">Sélectionner</option>
-                        {sites.map((s) => (
-                          <option key={s.value} value={s.value}>
-                            {s.label}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
+                    <MonthDataEntry
+                      data={energieData}
+                      setData={setEnergieData}
+                      mois={mois}
+                    />
+                    <SiteDataEntry
+                      data={energieData}
+                      setData={setEnergieData}
+                      sites={sites}
+                    />
 
                     <div className="form-group">
                       <label>Type *</label>
@@ -422,53 +383,17 @@ function DataEntryPage() {
                 {/* Formulaire Eau */}
                 {selectedCategory === "eau" && (
                   <div className="form-grid">
-                    <div className="form-group">
-                      <label>Année</label>
-                      <select
-                        value={eauData.annee}
-                        onChange={(e) =>
-                          setEauData({ ...eauData, annee: e.target.value })
-                        }
-                      >
-                        <option value="2025">2025</option>
-                        <option value="2024">2024</option>
-                        <option value="2023">2023</option>
-                      </select>
-                    </div>
-
-                    <div className="form-group">
-                      <label>Mois *</label>
-                      <select
-                        value={eauData.mois}
-                        onChange={(e) =>
-                          setEauData({ ...eauData, mois: e.target.value })
-                        }
-                      >
-                        <option value="">Sélectionner</option>
-                        {mois.map((m) => (
-                          <option key={m.value} value={m.value}>
-                            {m.label}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-
-                    <div className="form-group">
-                      <label>Site *</label>
-                      <select
-                        value={eauData.site}
-                        onChange={(e) =>
-                          setEauData({ ...eauData, site: e.target.value })
-                        }
-                      >
-                        <option value="">Sélectionner</option>
-                        {sites.map((s) => (
-                          <option key={s.value} value={s.value}>
-                            {s.label}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
+                    <YearDataEntry data={eauData} setData={setEauData} />
+                    <MonthDataEntry
+                      data={eauData}
+                      setData={setEauData}
+                      mois={mois}
+                    />
+                    <SiteDataEntry
+                      data={eauData}
+                      setData={setEauData}
+                      sites={sites}
+                    />
 
                     <div className="form-group">
                       <label>Famille de culture</label>
@@ -523,62 +448,21 @@ function DataEntryPage() {
                 {/* Formulaire Déchets */}
                 {selectedCategory === "dechets" && (
                   <div className="form-grid">
-                    <div className="form-group">
-                      <label>Année</label>
-                      <select
-                        value={dechetsData.annee}
-                        onChange={(e) =>
-                          setDechetsData({
-                            ...dechetsData,
-                            annee: e.target.value,
-                          })
-                        }
-                      >
-                        <option value="2025">2025</option>
-                        <option value="2024">2024</option>
-                        <option value="2023">2023</option>
-                      </select>
-                    </div>
+                    <YearDataEntry
+                      data={dechetsData}
+                      setData={setDechetsData}
+                    />
 
-                    <div className="form-group">
-                      <label>Mois *</label>
-                      <select
-                        value={dechetsData.mois}
-                        onChange={(e) =>
-                          setDechetsData({
-                            ...dechetsData,
-                            mois: e.target.value,
-                          })
-                        }
-                      >
-                        <option value="">Sélectionner</option>
-                        {mois.map((m) => (
-                          <option key={m.value} value={m.value}>
-                            {m.label}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-
-                    <div className="form-group">
-                      <label>Site *</label>
-                      <select
-                        value={dechetsData.site}
-                        onChange={(e) =>
-                          setDechetsData({
-                            ...dechetsData,
-                            site: e.target.value,
-                          })
-                        }
-                      >
-                        <option value="">Sélectionner</option>
-                        {sites.map((s) => (
-                          <option key={s.value} value={s.value}>
-                            {s.label}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
+                    <MonthDataEntry
+                      data={dechetsData}
+                      setData={setDechetsData}
+                      mois={mois}
+                    />
+                    <MonthDataEntry
+                      data={dechetsData}
+                      setData={setDechetsData}
+                      sites={sites}
+                    />
 
                     <div className="form-group">
                       <label>Catégorie déchets</label>
@@ -643,56 +527,18 @@ function DataEntryPage() {
                 {/* Formulaire Social */}
                 {selectedCategory === "social" && (
                   <div className="form-grid">
-                    <div className="form-group">
-                      <label>Année</label>
-                      <select
-                        value={socialData.annee}
-                        onChange={(e) =>
-                          setSocialData({
-                            ...socialData,
-                            annee: e.target.value,
-                          })
-                        }
-                      >
-                        <option value="2025">2025</option>
-                        <option value="2024">2024</option>
-                        <option value="2023">2023</option>
-                      </select>
-                    </div>
+                    <YearDataEntry data={socialData} setData={setSocialData} />
 
-                    <div className="form-group">
-                      <label>Mois *</label>
-                      <select
-                        value={socialData.mois}
-                        onChange={(e) =>
-                          setSocialData({ ...socialData, mois: e.target.value })
-                        }
-                      >
-                        <option value="">Sélectionner</option>
-                        {mois.map((m) => (
-                          <option key={m.value} value={m.value}>
-                            {m.label}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-
-                    <div className="form-group">
-                      <label>Site *</label>
-                      <select
-                        value={socialData.site}
-                        onChange={(e) =>
-                          setSocialData({ ...socialData, site: e.target.value })
-                        }
-                      >
-                        <option value="">Sélectionner</option>
-                        {sites.map((s) => (
-                          <option key={s.value} value={s.value}>
-                            {s.label}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
+                    <MonthDataEntry
+                      data={socialData}
+                      setData={setSocialData}
+                      mois={mois}
+                    />
+                    <SiteDataEntry
+                      data={socialData}
+                      setData={setSocialData}
+                      sites={sites}
+                    />
 
                     <div className="form-group">
                       <label>Action *</label>
@@ -757,42 +603,20 @@ function DataEntryPage() {
                 {/* Formulaire Production */}
                 {selectedCategory === "production" && (
                   <div className="form-grid">
-                    <div className="form-group">
-                      <label>Année</label>
-                      <select
-                        value={productionData.annee}
-                        onChange={(e) =>
-                          setProductionData({
-                            ...productionData,
-                            annee: e.target.value,
-                          })
-                        }
-                      >
-                        <option value="2025">2025</option>
-                        <option value="2024">2024</option>
-                        <option value="2023">2023</option>
-                      </select>
-                    </div>
-
-                    <div className="form-group">
-                      <label>Mois *</label>
-                      <select
-                        value={productionData.mois}
-                        onChange={(e) =>
-                          setProductionData({
-                            ...productionData,
-                            mois: e.target.value,
-                          })
-                        }
-                      >
-                        <option value="">Sélectionner</option>
-                        {mois.map((m) => (
-                          <option key={m.value} value={m.value}>
-                            {m.label}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
+                    <YearDataEntry
+                      data={productionData}
+                      setData={setProductionData}
+                    />
+                    <MonthDataEntry
+                      data={productionData}
+                      setData={setProductionData}
+                      mois={mois}
+                    />
+                    <SiteDataEntry
+                      data={productionData}
+                      setData={setProductionData}
+                      sites={sites}
+                    />
 
                     <div className="form-group">
                       <label>Site *</label>

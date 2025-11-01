@@ -26,14 +26,7 @@ function App() {
               </ProtectedRoute>
             }
           />
-          <Route
-            path="/data-entry"
-            element={
-              <ProtectedRoute user={user}>
-                <DataEntryPage />{" "}
-              </ProtectedRoute>
-            }
-          />
+          <Route path="/data-entry" element={<DataEntryPage />} />
           <Route
             path="/carbon"
             element={
