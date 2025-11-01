@@ -1,15 +1,18 @@
-import "./App.css";
+import { useState } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import "./App.css";
 import { Login } from "./Components/Login/Login";
 import Dashboard from "./Components/Dashboard/Dashboard";
 import DataEntryPage from "./Components/DataEntryPage/DataEntryPage";
 import CarbonFootprintPage from "./Components/CarbonFootprintPage/CarbonFootprintPage";
 import ESGIndicatorsPage from "./Components/ESGIndicatorsPage/ESGIndicatorsPage";
 import ProtectedRoute from "./Components/ProtectedRoute/ProtectedRoute";
-import { useState } from "react";
 
-function App() {
-  const [user, setUser] = useState(null);
+type User = Record<string, unknown>;
+
+const App = () => {
+  const [user] = useState<User | null>(null);
+
   return (
     <Router basename={process.env.PUBLIC_URL}>
       <div className="App">
@@ -39,7 +42,6 @@ function App() {
             path="/esg"
             element={
               <ProtectedRoute user={user}>
-                {" "}
                 <ESGIndicatorsPage />
               </ProtectedRoute>
             }
@@ -48,6 +50,6 @@ function App() {
       </div>
     </Router>
   );
-}
+};
 
 export default App;

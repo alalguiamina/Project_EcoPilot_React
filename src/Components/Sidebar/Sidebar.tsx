@@ -1,4 +1,3 @@
-import React from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import "./Sidebar.css";
 import dashboardIcon from "../Assests/dashboardIcon.png";
@@ -8,12 +7,25 @@ import chartIcon from "../Assests/chart.png";
 import targetIcon from "../Assests/target.png";
 import reportIcon from "../Assests/report.png";
 import settingsIcon from "../Assests/settings.png";
+import logo from "../Assests/logo.png";
 
-function Sidebar({ chose }) {
+type SidebarProps = {
+  chose?: string;
+};
+
+type MenuItem = {
+  id: string;
+  label: string;
+  icon: string;
+  color: string;
+  path: string;
+};
+
+const Sidebar = (_props: SidebarProps) => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const menuItems = [
+  const menuItems: MenuItem[] = [
     {
       id: "dashboard",
       label: "Dashboard",
@@ -66,12 +78,12 @@ function Sidebar({ chose }) {
   ];
 
   // Détermine la page active selon l'URL
-  const isActive = (path) => location.pathname === path;
+  const isActive = (path: string) => location.pathname === path;
 
   return (
     <aside className="sidebar">
       <div className="sidebar-logo">
-        <img src={require("../Assests/logo.png")} alt="Logo" />
+        <img src={logo} alt="Logo" />
       </div>
 
       <nav className="sidebar-nav">

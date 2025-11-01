@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import "./DataEntryPage.css";
 import Sidebar from "../Sidebar/Sidebar";
 import boltIcon from "../Assests/bolt.png";
@@ -10,13 +10,71 @@ import deleteIcon from "../Assests/delete.png";
 import YearDataEntry from "Components/YearDataEntry/YearDataEntry";
 import MonthDataEntry from "Components/MonthDataEntry/MonthDataEntry";
 import SiteDataEntry from "Components/SiteDataEntry/SiteDataEntry";
+
+type CategoryId = "energie" | "eau" | "dechets" | "social" | "production";
+
+type Category = {
+  id: CategoryId;
+  name: string;
+  icon: string;
+  color: string;
+};
+
+type SelectOption = {
+  value: string;
+  label: string;
+};
+
+type BaseForm = {
+  annee: string;
+  mois: string;
+  site: string;
+};
+
+type EnergieForm = BaseForm & {
+  type: string;
+  unite: string;
+  valeur: string;
+};
+
+type EauForm = BaseForm & {
+  familleCulture: string;
+  variete: string;
+  volumeEau: string;
+};
+
+type DechetsForm = BaseForm & {
+  categorie: string;
+  unite: string;
+  valeur: string;
+};
+
+type SocialForm = BaseForm & {
+  action: string;
+  budget: string;
+  beneficiaires: string;
+};
+
+type ProductionForm = BaseForm & {
+  action: string;
+  budget: string;
+  beneficiaires: string;
+};
+
+type DataEntryRecord = {
+  id: number;
+  category: string;
+} & Record<string, string | number>;
+
 function DataEntryPage() {
-  const [selectedCategory, setSelectedCategory] = useState("");
-  const [entries, setEntries] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState<CategoryId | "">(
+    ""
+  );
+  const [entries, setEntries] = useState<DataEntryRecord[]>([]);
   const [saved, setSaved] = useState(false);
 
   // États pour les formulaires
-  const [energieData, setEnergieData] = useState({
+  const [energieData, setEnergieData] = useState<EnergieForm>({
     annee: "2025",
     mois: "",
     site: "",
@@ -25,7 +83,7 @@ function DataEntryPage() {
     valeur: "",
   });
 
-  const [eauData, setEauData] = useState({
+  const [eauData, setEauData] = useState<EauForm>({
     annee: "2025",
     mois: "",
     site: "",
@@ -34,7 +92,7 @@ function DataEntryPage() {
     volumeEau: "",
   });
 
-  const [dechetsData, setDechetsData] = useState({
+  const [dechetsData, setDechetsData] = useState<DechetsForm>({
     annee: "2025",
     mois: "",
     site: "",
@@ -43,7 +101,7 @@ function DataEntryPage() {
     valeur: "",
   });
 
-  const [socialData, setSocialData] = useState({
+  const [socialData, setSocialData] = useState<SocialForm>({
     annee: "2025",
     mois: "",
     site: "",
@@ -52,7 +110,7 @@ function DataEntryPage() {
     beneficiaires: "",
   });
 
-  const [productionData, setProductionData] = useState({
+  const [productionData, setProductionData] = useState<ProductionForm>({
     annee: "2025",
     mois: "",
     site: "",
@@ -61,7 +119,7 @@ function DataEntryPage() {
     beneficiaires: "",
   });
 
-  const categories = [
+  const categories: Category[] = [
     { id: "energie", name: "Énergie", icon: boltIcon, color: "#eab308" },
     { id: "eau", name: "Eau", icon: waterIcon, color: "#3b82f6" },
     { id: "dechets", name: "Déchets", icon: trashIcon, color: "#22c55e" },
@@ -74,7 +132,7 @@ function DataEntryPage() {
     },
   ];
 
-  const mois = [
+  const mois: SelectOption[] = [
     { value: "01", label: "Janvier" },
     { value: "02", label: "Février" },
     { value: "03", label: "Mars" },
@@ -89,7 +147,7 @@ function DataEntryPage() {
     { value: "12", label: "Décembre" },
   ];
 
-  const sites = [
+  const sites: SelectOption[] = [
     { value: "benguerir", label: "Benguerir — Ferme expérimentale" },
     { value: "settat", label: "Settat — Ferme Doukkala" },
     { value: "meknes", label: "Meknès — Domaine Oléicole" },
@@ -100,7 +158,7 @@ function DataEntryPage() {
   ];
 
   const handleAddLine = () => {
-    let newEntry = null;
+    let newEntry: DataEntryRecord | null = null;
 
     switch (selectedCategory) {
       case "energie":
@@ -206,8 +264,9 @@ function DataEntryPage() {
         return;
     }
 
-    if (newEntry) {
-      setEntries([...entries, newEntry]);
+    if (newEntry !== null) {
+      const entryToAdd = newEntry;
+      setEntries((prev) => [...prev, entryToAdd]);
     }
   };
 
@@ -223,18 +282,18 @@ function DataEntryPage() {
     }, 3000);
   };
 
-  const handleDelete = (id) => {
-    setEntries(entries.filter((entry) => entry.id !== id));
+  const handleDelete = (id: number) => {
+    setEntries((prev) => prev.filter((entry) => entry.id !== id));
   };
 
-  const getSiteLabel = (value) => {
+  const getSiteLabel = (value: string) => {
     const site = sites.find((s) => s.value === value);
     return site ? site.label.split("—")[0].trim() : value;
   };
 
-  const getMoisLabel = (value) => {
-    const m = mois.find((m) => m.value === value);
-    return m ? m.label : value;
+  const getMoisLabel = (value: string) => {
+    const month = mois.find((m) => m.value === value);
+    return month ? month.label : value;
   };
 
   return (
@@ -458,7 +517,7 @@ function DataEntryPage() {
                       setData={setDechetsData}
                       mois={mois}
                     />
-                    <MonthDataEntry
+                    <SiteDataEntry
                       data={dechetsData}
                       setData={setDechetsData}
                       sites={sites}
@@ -808,8 +867,8 @@ function DataEntryPage() {
                             </span>
                           </td>
                           <td>{entry.annee}</td>
-                          <td>{getMoisLabel(entry.mois)}</td>
-                          <td>{getSiteLabel(entry.site)}</td>
+                          <td>{getMoisLabel(String(entry.mois))}</td>
+                          <td>{getSiteLabel(String(entry.site))}</td>
                           <td className="details-cell">
                             {entry.category === "Énergie" &&
                               `${entry.type} - ${entry.unite || "N/A"} - ${

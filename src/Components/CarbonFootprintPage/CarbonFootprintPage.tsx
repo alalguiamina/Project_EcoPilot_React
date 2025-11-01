@@ -1,42 +1,61 @@
-import React, { useState } from 'react';
-import './CarbonFootprintPage.css';
-import Sidebar from '../Sidebar/Sidebar';
+import { useState } from "react";
+import "./CarbonFootprintPage.css";
+import Sidebar from "../Sidebar/Sidebar";
+
+type ActiveTab = "scope1" | "scope2" | "scope3";
+
+type ScopeDatum = {
+  name: string;
+  value: number;
+  color: string;
+};
+
+type EvolutionDatum = {
+  mois: string;
+  emissions: number;
+  objectif: number;
+};
+
+type ScopeDetail = {
+  source: string;
+  emissions: number;
+};
 
 function CarbonFootprintPage() {
-  const [activeTab, setActiveTab] = useState('scope1');
+  const [activeTab, setActiveTab] = useState<ActiveTab>("scope1");
 
-  const scopeData = [
-    { name: 'Scope 1', value: 332.5, color: '#16a34a' },
-    { name: 'Scope 2', value: 237.5, color: '#3b82f6' },
-    { name: 'Scope 3', value: 380, color: '#f59e0b' },
+  const scopeData: ScopeDatum[] = [
+    { name: "Scope 1", value: 332.5, color: "#16a34a" },
+    { name: "Scope 2", value: 237.5, color: "#3b82f6" },
+    { name: "Scope 3", value: 380, color: "#f59e0b" },
   ];
 
-  const evolutionData = [
-    { mois: 'Jan', emissions: 1200, objectif: 1150 },
-    { mois: 'Fév', emissions: 1150, objectif: 1100 },
-    { mois: 'Mar', emissions: 1100, objectif: 1050 },
-    { mois: 'Avr', emissions: 1050, objectif: 1000 },
-    { mois: 'Mai', emissions: 1000, objectif: 950 },
-    { mois: 'Juin', emissions: 950, objectif: 900 },
+  const evolutionData: EvolutionDatum[] = [
+    { mois: "Jan", emissions: 1200, objectif: 1150 },
+    { mois: "Fév", emissions: 1150, objectif: 1100 },
+    { mois: "Mar", emissions: 1100, objectif: 1050 },
+    { mois: "Avr", emissions: 1050, objectif: 1000 },
+    { mois: "Mai", emissions: 1000, objectif: 950 },
+    { mois: "Juin", emissions: 950, objectif: 900 },
   ];
 
-  const scope1Details = [
-    { source: 'Combustion diesel', emissions: 156.3 },
-    { source: 'Gaz naturel', emissions: 89.7 },
-    { source: 'Gaz réfrigérants', emissions: 23.5 },
-    { source: 'Émissions agricoles', emissions: 63.0 },
+  const scope1Details: ScopeDetail[] = [
+    { source: "Combustion diesel", emissions: 156.3 },
+    { source: "Gaz naturel", emissions: 89.7 },
+    { source: "Gaz réfrigérants", emissions: 23.5 },
+    { source: "Émissions agricoles", emissions: 63.0 },
   ];
 
-  const scope2Details = [
-    { source: 'Électricité réseau', emissions: 198.2 },
-    { source: 'Vapeur achetée', emissions: 39.3 },
+  const scope2Details: ScopeDetail[] = [
+    { source: "Électricité réseau", emissions: 198.2 },
+    { source: "Vapeur achetée", emissions: 39.3 },
   ];
 
-  const scope3Details = [
-    { source: 'Transport amont', emissions: 125.8 },
-    { source: 'Achats matières premières', emissions: 156.4 },
-    { source: 'Déplacements professionnels', emissions: 43.2 },
-    { source: 'Traitement déchets', emissions: 54.6 },
+  const scope3Details: ScopeDetail[] = [
+    { source: "Transport amont", emissions: 125.8 },
+    { source: "Achats matières premières", emissions: 156.4 },
+    { source: "Déplacements professionnels", emissions: 43.2 },
+    { source: "Traitement déchets", emissions: 54.6 },
   ];
 
   const totalEmissions = scopeData.reduce((sum, item) => sum + item.value, 0);
@@ -120,11 +139,13 @@ function CarbonFootprintPage() {
     const chartHeight = height - 2 * padding;
     
     const maxEmissions = Math.max(
-      ...evolutionData.map(d => Math.max(d.emissions, d.objectif))
+      ...evolutionData.map((datum) => Math.max(datum.emissions, datum.objectif))
     );
     
-    const xScale = (index) => padding + (index / (evolutionData.length - 1)) * chartWidth;
-    const yScale = (value) => padding + chartHeight - (value / maxEmissions) * chartHeight;
+    const xScale = (index: number) =>
+      padding + (index / (evolutionData.length - 1)) * chartWidth;
+    const yScale = (value: number) =>
+      padding + chartHeight - (value / maxEmissions) * chartHeight;
     
     return (
       <div className="line-chart-container">
@@ -230,14 +251,14 @@ function CarbonFootprintPage() {
   };
 
   // Simple bar chart implementation
-  const renderBarChart = (data, color) => {
+  const renderBarChart = (data: ScopeDetail[], color: string) => {
     const width = 600;
     const height = 300;
     const padding = { top: 20, right: 40, bottom: 60, left: 200 };
     const chartWidth = width - padding.left - padding.right;
     const chartHeight = height - padding.top - padding.bottom;
     
-    const maxEmissions = Math.max(...data.map(d => d.emissions));
+    const maxEmissions = Math.max(...data.map((datum) => datum.emissions));
     
     return (
       <div className="bar-chart-container">

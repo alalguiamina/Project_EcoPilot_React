@@ -1,76 +1,133 @@
-import React, { useState } from 'react';
-import './ESGIndicatorsPage.css';
-import Sidebar from '../Sidebar/Sidebar';
+import { ReactNode, useState } from "react";
+import "./ESGIndicatorsPage.css";
+import Sidebar from "../Sidebar/Sidebar";
+
+type EnergyDatum = {
+  mois: string;
+  consommation: number;
+  objectif: number;
+};
+
+type WaterDatum = EnergyDatum;
+
+type WasteDatum = {
+  mois: string;
+  recycles: number;
+  objectif: number;
+};
+
+type SocialDatum = {
+  mois: string;
+  formation: number;
+  securite: number;
+};
+
+type SocietaleDatum = {
+  mois: string;
+  impact: number;
+  beneficiaires: number;
+};
+
+type GouvernanceDatum = {
+  mois: string;
+  conformite: number;
+  audits: number;
+};
+
+type SectionKey =
+  | "energie"
+  | "eau"
+  | "dechets"
+  | "sociale"
+  | "societale"
+  | "gouvernance";
+
+type ChartDatum = Record<string, number | string>;
+
+const getNumericValue = (datum: ChartDatum, key: string) => {
+  const value = datum[key];
+  return typeof value === "number" ? value : Number(value ?? 0);
+};
 
 function ESGIndicatorsPage() {
-  const [expandedSection, setExpandedSection] = useState(null);
+  const [expandedSection, setExpandedSection] = useState<SectionKey | null>(
+    null
+  );
 
   // Données pour Gestion de l'énergie
-  const energieData = [
-    { mois: 'Jan', consommation: 12500, objectif: 13000 },
-    { mois: 'Fév', consommation: 12200, objectif: 12800 },
-    { mois: 'Mar', consommation: 11800, objectif: 12500 },
-    { mois: 'Avr', consommation: 11500, objectif: 12000 },
-    { mois: 'Mai', consommation: 11200, objectif: 11800 },
-    { mois: 'Juin', consommation: 10900, objectif: 11500 },
+  const energieData: EnergyDatum[] = [
+    { mois: "Jan", consommation: 12500, objectif: 13000 },
+    { mois: "Fév", consommation: 12200, objectif: 12800 },
+    { mois: "Mar", consommation: 11800, objectif: 12500 },
+    { mois: "Avr", consommation: 11500, objectif: 12000 },
+    { mois: "Mai", consommation: 11200, objectif: 11800 },
+    { mois: "Juin", consommation: 10900, objectif: 11500 },
   ];
 
   // Données pour Gestion de l'eau
-  const eauData = [
-    { mois: 'Jan', consommation: 8500, objectif: 9000 },
-    { mois: 'Fév', consommation: 8200, objectif: 8800 },
-    { mois: 'Mar', consommation: 7900, objectif: 8500 },
-    { mois: 'Avr', consommation: 7600, objectif: 8200 },
-    { mois: 'Mai', consommation: 7300, objectif: 8000 },
-    { mois: 'Juin', consommation: 7000, objectif: 7800 },
+  const eauData: WaterDatum[] = [
+    { mois: "Jan", consommation: 8500, objectif: 9000 },
+    { mois: "Fév", consommation: 8200, objectif: 8800 },
+    { mois: "Mar", consommation: 7900, objectif: 8500 },
+    { mois: "Avr", consommation: 7600, objectif: 8200 },
+    { mois: "Mai", consommation: 7300, objectif: 8000 },
+    { mois: "Juin", consommation: 7000, objectif: 7800 },
   ];
 
   // Données pour Gestion des déchets
-  const dechetsData = [
-    { mois: 'Jan', recycles: 75, objectif: 80 },
-    { mois: 'Fév', recycles: 78, objectif: 80 },
-    { mois: 'Mar', recycles: 82, objectif: 82 },
-    { mois: 'Avr', recycles: 85, objectif: 85 },
-    { mois: 'Mai', recycles: 88, objectif: 88 },
-    { mois: 'Juin', recycles: 90, objectif: 90 },
+  const dechetsData: WasteDatum[] = [
+    { mois: "Jan", recycles: 75, objectif: 80 },
+    { mois: "Fév", recycles: 78, objectif: 80 },
+    { mois: "Mar", recycles: 82, objectif: 82 },
+    { mois: "Avr", recycles: 85, objectif: 85 },
+    { mois: "Mai", recycles: 88, objectif: 88 },
+    { mois: "Juin", recycles: 90, objectif: 90 },
   ];
 
   // Données pour Social - Sociale
-  const socialeData = [
-    { mois: 'Jan', formation: 65, securite: 92 },
-    { mois: 'Fév', formation: 70, securite: 93 },
-    { mois: 'Mar', formation: 75, securite: 94 },
-    { mois: 'Avr', formation: 80, securite: 94 },
-    { mois: 'Mai', formation: 85, securite: 95 },
-    { mois: 'Juin', formation: 88, securite: 95 },
+  const socialeData: SocialDatum[] = [
+    { mois: "Jan", formation: 65, securite: 92 },
+    { mois: "Fév", formation: 70, securite: 93 },
+    { mois: "Mar", formation: 75, securite: 94 },
+    { mois: "Avr", formation: 80, securite: 94 },
+    { mois: "Mai", formation: 85, securite: 95 },
+    { mois: "Juin", formation: 88, securite: 95 },
   ];
 
   // Données pour Social - Sociétale
-  const societaleData = [
-    { mois: 'Jan', impact: 70, beneficiaires: 450 },
-    { mois: 'Fév', impact: 72, beneficiaires: 480 },
-    { mois: 'Mar', impact: 75, beneficiaires: 520 },
-    { mois: 'Avr', impact: 78, beneficiaires: 560 },
-    { mois: 'Mai', impact: 80, beneficiaires: 600 },
-    { mois: 'Juin', impact: 82, beneficiaires: 650 },
+  const societaleData: SocietaleDatum[] = [
+    { mois: "Jan", impact: 70, beneficiaires: 450 },
+    { mois: "Fév", impact: 72, beneficiaires: 480 },
+    { mois: "Mar", impact: 75, beneficiaires: 520 },
+    { mois: "Avr", impact: 78, beneficiaires: 560 },
+    { mois: "Mai", impact: 80, beneficiaires: 600 },
+    { mois: "Juin", impact: 82, beneficiaires: 650 },
   ];
 
   // Données pour Gouvernance
-  const gouvernanceData = [
-    { mois: 'Jan', conformite: 92, audits: 3 },
-    { mois: 'Fév', conformite: 93, audits: 3 },
-    { mois: 'Mar', conformite: 94, audits: 4 },
-    { mois: 'Avr', conformite: 95, audits: 4 },
-    { mois: 'Mai', conformite: 96, audits: 5 },
-    { mois: 'Juin', conformite: 96, audits: 5 },
+  const gouvernanceData: GouvernanceDatum[] = [
+    { mois: "Jan", conformite: 92, audits: 3 },
+    { mois: "Fév", conformite: 93, audits: 3 },
+    { mois: "Mar", conformite: 94, audits: 4 },
+    { mois: "Avr", conformite: 95, audits: 4 },
+    { mois: "Mai", conformite: 96, audits: 5 },
+    { mois: "Juin", conformite: 96, audits: 5 },
   ];
 
-  const toggleSection = (section) => {
+  const toggleSection = (section: SectionKey) => {
     setExpandedSection(expandedSection === section ? null : section);
   };
 
   // Simple line chart implementation
-  const renderLineChart = (data, color1, color2, key1, key2, name1, name2) => {
+  const renderLineChart = (
+    data: ChartDatum[],
+    color1: string,
+    color2: string,
+    key1: string,
+    key2: string,
+    name1: string,
+    name2: string
+  ) => {
     const width = 600;
     const height = 300;
     const padding = 40;
@@ -78,17 +135,24 @@ function ESGIndicatorsPage() {
     const chartHeight = height - 2 * padding;
     
     const maxValue = Math.max(
-      ...data.map(d => Math.max(d[key1] || 0, d[key2] || 0))
+      ...data.map((datum) =>
+        Math.max(
+          getNumericValue(datum, key1),
+          getNumericValue(datum, key2)
+        )
+      )
     );
     
-    const xScale = (index) => padding + (index / (data.length - 1)) * chartWidth;
-    const yScale = (value) => padding + chartHeight - (value / maxValue) * chartHeight;
+    const xScale = (index: number) =>
+      padding + (index / (data.length - 1)) * chartWidth;
+    const yScale = (value: number) =>
+      padding + chartHeight - (value / maxValue) * chartHeight;
     
     return (
       <div className="line-chart-container">
         <svg width={width} height={height}>
           {/* Grid lines */}
-          {[0, 0.25, 0.5, 0.75, 1].map(i => (
+          {[0, 0.25, 0.5, 0.75, 1].map((i) => (
             <line
               key={`h-${i}`}
               x1={padding}
@@ -105,21 +169,21 @@ function ESGIndicatorsPage() {
           <line x1={padding} y1={padding} x2={padding} y2={height - padding} stroke="#94a3b8" />
           
           {/* X axis labels */}
-          {data.map((d, i) => (
+          {data.map((datum, index) => (
             <text
-              key={`x-${i}`}
-              x={xScale(i)}
+              key={`x-${index}`}
+              x={xScale(index)}
               y={height - padding + 20}
               textAnchor="middle"
               fontSize="12"
               fill="#64748b"
             >
-              {d.mois}
+              {datum.mois}
             </text>
           ))}
           
           {/* Y axis labels */}
-          {[0, 0.25, 0.5, 0.75, 1].map(i => (
+          {[0, 0.25, 0.5, 0.75, 1].map((i) => (
             <text
               key={`y-${i}`}
               x={padding - 10}
@@ -135,26 +199,39 @@ function ESGIndicatorsPage() {
           
           {/* First line */}
           <polyline
-            points={data.map((d, i) => `${xScale(i)},${yScale(d[key1])}`).join(' ')}
+            points={data
+              .map((datum, index) => {
+                const value = getNumericValue(datum, key1);
+                return `${xScale(index)},${yScale(value)}`;
+              })
+              .join(" ")}
             fill="none"
             stroke={color1}
             strokeWidth="2"
           />
           
           {/* First line points */}
-          {data.map((d, i) => (
-            <circle
-              key={`${key1}-${i}`}
-              cx={xScale(i)}
-              cy={yScale(d[key1])}
-              r="4"
-              fill={color1}
-            />
-          ))}
+          {data.map((datum, index) => {
+            const value = getNumericValue(datum, key1);
+            return (
+              <circle
+                key={`${key1}-${index}`}
+                cx={xScale(index)}
+                cy={yScale(value)}
+                r="4"
+                fill={color1}
+              />
+            );
+          })}
           
           {/* Second line */}
           <polyline
-            points={data.map((d, i) => `${xScale(i)},${yScale(d[key2])}`).join(' ')}
+            points={data
+              .map((datum, index) => {
+                const value = getNumericValue(datum, key2);
+                return `${xScale(index)},${yScale(value)}`;
+              })
+              .join(" ")}
             fill="none"
             stroke={color2}
             strokeWidth="2"
@@ -162,15 +239,18 @@ function ESGIndicatorsPage() {
           />
           
           {/* Second line points */}
-          {data.map((d, i) => (
-            <circle
-              key={`${key2}-${i}`}
-              cx={xScale(i)}
-              cy={yScale(d[key2])}
-              r="4"
-              fill={color2}
-            />
-          ))}
+          {data.map((datum, index) => {
+            const value = getNumericValue(datum, key2);
+            return (
+              <circle
+                key={`${key2}-${index}`}
+                cx={xScale(index)}
+                cy={yScale(value)}
+                r="4"
+                fill={color2}
+              />
+            );
+          })}
         </svg>
         
         <div className="chart-legend">
@@ -188,7 +268,15 @@ function ESGIndicatorsPage() {
   };
 
   // Simple bar chart implementation
-  const renderBarChart = (data, color1, color2, key1, key2, name1, name2) => {
+  const renderBarChart = (
+    data: ChartDatum[],
+    color1: string,
+    color2: string,
+    key1: string,
+    key2: string,
+    name1: string,
+    name2: string
+  ) => {
     const width = 600;
     const height = 300;
     const padding = { top: 20, right: 40, bottom: 60, left: 60 };
@@ -196,14 +284,19 @@ function ESGIndicatorsPage() {
     const chartHeight = height - padding.top - padding.bottom;
     
     const maxValue = Math.max(
-      ...data.map(d => Math.max(d[key1] || 0, d[key2] || 0))
+      ...data.map((datum) =>
+        Math.max(
+          getNumericValue(datum, key1),
+          getNumericValue(datum, key2)
+        )
+      )
     );
     
     return (
       <div className="bar-chart-container">
         <svg width={width} height={height}>
           {/* Grid lines */}
-          {[0, 0.25, 0.5, 0.75, 1].map(i => (
+          {[0, 0.25, 0.5, 0.75, 1].map((i) => (
             <line
               key={`h-${i}`}
               x1={padding.left}
@@ -220,7 +313,7 @@ function ESGIndicatorsPage() {
           <line x1={padding.left} y1={padding.top} x2={padding.left} y2={height - padding.bottom} stroke="#94a3b8" />
           
           {/* Y axis labels */}
-          {[0, 0.25, 0.5, 0.75, 1].map(i => (
+          {[0, 0.25, 0.5, 0.75, 1].map((i) => (
             <text
               key={`y-${i}`}
               x={padding.left - 10}
@@ -235,19 +328,22 @@ function ESGIndicatorsPage() {
           ))}
           
           {/* Bars and X axis labels */}
-          {data.map((d, i) => {
-            const bar1Height = (d[key1] / maxValue) * chartHeight;
+          {data.map((datum, index) => {
+            const value1 = getNumericValue(datum, key1);
+            const value2 = getNumericValue(datum, key2);
+            const bar1Height = (value1 / maxValue) * chartHeight;
             const bar1Y = height - padding.bottom - bar1Height;
-            const bar2Height = (d[key2] / maxValue) * chartHeight;
+            const bar2Height = (value2 / maxValue) * chartHeight;
             const bar2Y = height - padding.bottom - bar2Height;
             
-            const barX = padding.left + (i + 0.5) * (chartWidth / data.length);
+            const slotWidth = chartWidth / data.length;
+            const barX = padding.left + (index + 0.5) * slotWidth;
             const barWidth = (chartWidth / data.length) * 0.3;
             const bar1X = barX - barWidth;
             const bar2X = barX;
             
             return (
-              <g key={i}>
+              <g key={index}>
                 <rect
                   x={bar1X}
                   y={bar1Y}
@@ -269,7 +365,7 @@ function ESGIndicatorsPage() {
                   fontSize="12"
                   fill="#64748b"
                 >
-                  {d.mois}
+                  {datum.mois}
                 </text>
               </g>
             );
@@ -291,25 +387,40 @@ function ESGIndicatorsPage() {
   };
 
   // Simple dual axis chart implementation
-  const renderDualAxisChart = (data, color1, color2, key1, key2, name1, name2) => {
+  const renderDualAxisChart = (
+    data: ChartDatum[],
+    color1: string,
+    color2: string,
+    key1: string,
+    key2: string,
+    name1: string,
+    name2: string
+  ) => {
     const width = 600;
     const height = 300;
     const padding = 40;
     const chartWidth = width - 2 * padding;
     const chartHeight = height - 2 * padding;
     
-    const maxLeft = Math.max(...data.map(d => d[key1] || 0));
-    const maxRight = Math.max(...data.map(d => d[key2] || 0));
+    const maxLeft = Math.max(
+      ...data.map((datum) => getNumericValue(datum, key1))
+    );
+    const maxRight = Math.max(
+      ...data.map((datum) => getNumericValue(datum, key2))
+    );
     
-    const xScale = (index) => padding + (index / (data.length - 1)) * chartWidth;
-    const yScaleLeft = (value) => padding + chartHeight - (value / maxLeft) * chartHeight;
-    const yScaleRight = (value) => padding + chartHeight - (value / maxRight) * chartHeight;
+    const xScale = (index: number) =>
+      padding + (index / (data.length - 1)) * chartWidth;
+    const yScaleLeft = (value: number) =>
+      padding + chartHeight - (value / maxLeft) * chartHeight;
+    const yScaleRight = (value: number) =>
+      padding + chartHeight - (value / maxRight) * chartHeight;
     
     return (
       <div className="line-chart-container">
         <svg width={width} height={height}>
           {/* Grid lines */}
-          {[0, 0.25, 0.5, 0.75, 1].map(i => (
+          {[0, 0.25, 0.5, 0.75, 1].map((i) => (
             <line
               key={`h-${i}`}
               x1={padding}
@@ -327,21 +438,21 @@ function ESGIndicatorsPage() {
           <line x1={width - padding} y1={padding} x2={width - padding} y2={height - padding} stroke="#94a3b8" />
           
           {/* X axis labels */}
-          {data.map((d, i) => (
+          {data.map((datum, index) => (
             <text
-              key={`x-${i}`}
-              x={xScale(i)}
+              key={`x-${index}`}
+              x={xScale(index)}
               y={height - padding + 20}
               textAnchor="middle"
               fontSize="12"
               fill="#64748b"
             >
-              {d.mois}
+              {datum.mois}
             </text>
           ))}
           
           {/* Left Y axis labels */}
-          {[0, 0.25, 0.5, 0.75, 1].map(i => (
+          {[0, 0.25, 0.5, 0.75, 1].map((i) => (
             <text
               key={`y-left-${i}`}
               x={padding - 10}
@@ -356,7 +467,7 @@ function ESGIndicatorsPage() {
           ))}
           
           {/* Right Y axis labels */}
-          {[0, 0.25, 0.5, 0.75, 1].map(i => (
+          {[0, 0.25, 0.5, 0.75, 1].map((i) => (
             <text
               key={`y-right-${i}`}
               x={width - padding + 10}
@@ -372,41 +483,57 @@ function ESGIndicatorsPage() {
           
           {/* First line */}
           <polyline
-            points={data.map((d, i) => `${xScale(i)},${yScaleLeft(d[key1])}`).join(' ')}
+            points={data
+              .map((datum, index) => {
+                const value = getNumericValue(datum, key1);
+                return `${xScale(index)},${yScaleLeft(value)}`;
+              })
+              .join(" ")}
             fill="none"
             stroke={color1}
             strokeWidth="2"
           />
           
           {/* First line points */}
-          {data.map((d, i) => (
-            <circle
-              key={`${key1}-${i}`}
-              cx={xScale(i)}
-              cy={yScaleLeft(d[key1])}
-              r="4"
-              fill={color1}
-            />
-          ))}
+          {data.map((datum, index) => {
+            const value = getNumericValue(datum, key1);
+            return (
+              <circle
+                key={`${key1}-${index}`}
+                cx={xScale(index)}
+                cy={yScaleLeft(value)}
+                r="4"
+                fill={color1}
+              />
+            );
+          })}
           
           {/* Second line */}
           <polyline
-            points={data.map((d, i) => `${xScale(i)},${yScaleRight(d[key2])}`).join(' ')}
+            points={data
+              .map((datum, index) => {
+                const value = getNumericValue(datum, key2);
+                return `${xScale(index)},${yScaleRight(value)}`;
+              })
+              .join(" ")}
             fill="none"
             stroke={color2}
             strokeWidth="2"
           />
           
           {/* Second line points */}
-          {data.map((d, i) => (
-            <circle
-              key={`${key2}-${i}`}
-              cx={xScale(i)}
-              cy={yScaleRight(d[key2])}
-              r="4"
-              fill={color2}
-            />
-          ))}
+          {data.map((datum, index) => {
+            const value = getNumericValue(datum, key2);
+            return (
+              <circle
+                key={`${key2}-${index}`}
+                cx={xScale(index)}
+                cy={yScaleRight(value)}
+                r="4"
+                fill={color2}
+              />
+            );
+          })}
         </svg>
         
         <div className="chart-legend">
@@ -424,9 +551,14 @@ function ESGIndicatorsPage() {
   };
 
   // Progress bar component
-  const ProgressBar = ({ value, className }) => {
+  type ProgressBarProps = {
+    value: number;
+    className?: string;
+  };
+
+  const ProgressBar = ({ value, className = "" }: ProgressBarProps) => {
     return (
-      <div className={`progress-bar ${className}`}>
+      <div className={`progress-bar ${className}`.trim()}>
         <div 
           className="progress-fill" 
           style={{ width: `${value}%` }}
@@ -436,14 +568,25 @@ function ESGIndicatorsPage() {
   };
 
   // Badge component
-  const Badge = ({ children, className }) => {
-    return <span className={`badge ${className}`}>{children}</span>;
+  type BadgeProps = {
+    children: ReactNode;
+    className?: string;
+  };
+
+  const Badge = ({ children, className = "" }: BadgeProps) => {
+    return <span className={`badge ${className}`.trim()}>{children}</span>;
   };
 
   // Trend icon component
-  const TrendIcon = ({ trend }) => {
-    if (trend === 'up') return <span className="trend-icon up">📈</span>;
-    if (trend === 'down') return <span className="trend-icon down">📉</span>;
+  type Trend = "up" | "down" | "stable";
+
+  type TrendIconProps = {
+    trend: Trend;
+  };
+
+  const TrendIcon = ({ trend }: TrendIconProps) => {
+    if (trend === "up") return <span className="trend-icon up">📈</span>;
+    if (trend === "down") return <span className="trend-icon down">📉</span>;
     return <span className="trend-icon stable">➖</span>;
   };
 

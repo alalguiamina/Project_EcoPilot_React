@@ -1,4 +1,3 @@
-import React from "react";
 import { useNavigate } from "react-router-dom";
 import Sidebar from "../Sidebar/Sidebar";
 import "./Dashboard.css";
@@ -26,14 +25,36 @@ import usersIcon from "../Assests/users.png";
 import awardIcon from "../Assests/award.png";
 import KpiCard from "../KpiCard/KpiCard";
 
+type DashboardProps = {
+  userLevel?: string;
+};
+
+type PieDatum = {
+  name: string;
+  value: number;
+  color: string;
+};
+
+type ESGDatum = {
+  mois: string;
+  environnement: number;
+  social: number;
+  gouvernance: number;
+};
+
+type EmissionDatum = {
+  mois: string;
+  emissions: number;
+};
+
 // 🔹 Données graphiques
-const pieData = [
+const pieData: PieDatum[] = [
   { name: "Scope 1", value: 35, color: "#16a34a" },
   { name: "Scope 2", value: 25, color: "#3b82f6" },
   { name: "Scope 3", value: 40, color: "#f59e0b" },
 ];
 
-const barData = [
+const barData: ESGDatum[] = [
   { mois: "Jan", environnement: 75, social: 82, gouvernance: 88 },
   { mois: "Fév", environnement: 78, social: 85, gouvernance: 90 },
   { mois: "Mar", environnement: 82, social: 88, gouvernance: 92 },
@@ -42,7 +63,7 @@ const barData = [
   { mois: "Juin", environnement: 90, social: 94, gouvernance: 96 },
 ];
 
-const lineData = [
+const lineData: EmissionDatum[] = [
   { mois: "Jan", emissions: 1200 },
   { mois: "Fév", emissions: 1150 },
   { mois: "Mar", emissions: 1100 },
@@ -50,7 +71,7 @@ const lineData = [
   { mois: "Mai", emissions: 1000 },
   { mois: "Juin", emissions: 950 },
 ];
-const emissionsData = [
+const emissionsData: EmissionDatum[] = [
   { mois: "Jan", emissions: 1200 },
   { mois: "Fév", emissions: 1150 },
   { mois: "Mar", emissions: 1100 },
@@ -59,7 +80,7 @@ const emissionsData = [
   { mois: "Juin", emissions: 950 },
 ];
 
-function Dashboard({ userLevel }) {
+const Dashboard = ({ userLevel }: DashboardProps) => {
   console.log(userLevel);
 
   const navigate = useNavigate();
@@ -137,9 +158,10 @@ function Dashboard({ userLevel }) {
                       cx="50%"
                       cy="50%"
                       labelLine={false}
-                      label={({ name, percent }) =>
-                        `${name}: ${(percent * 100).toFixed(0)}%`
-                      }
+                      label={({ name, percent }) => {
+                        const safePercent = typeof percent === "number" ? percent : 0;
+                        return `${name}: ${(safePercent * 100).toFixed(0)}%`;
+                      }}
                       outerRadius={100}
                       dataKey="value"
                     >
@@ -236,6 +258,6 @@ function Dashboard({ userLevel }) {
       </div>
     </div>
   );
-}
+};
 
 export default Dashboard;

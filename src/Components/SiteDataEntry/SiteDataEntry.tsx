@@ -1,4 +1,29 @@
-function SiteDataEntry({ data, setData, label = "Site", sites }) {
+import { Dispatch, SetStateAction } from "react";
+
+type SiteDataShape = {
+  site: string;
+};
+
+type SiteOption = {
+  value: string;
+  label: string;
+};
+
+type SiteDataEntryProps<T extends SiteDataShape> = {
+  data: T;
+  setData: Dispatch<SetStateAction<T>>;
+  label?: string;
+  sites: SiteOption[];
+  required?: boolean;
+};
+
+function SiteDataEntry<T extends SiteDataShape>({
+  data,
+  setData,
+  label = "Site",
+  sites,
+  required = false,
+}: SiteDataEntryProps<T>) {
   return (
     <div className="form-group">
       <label>

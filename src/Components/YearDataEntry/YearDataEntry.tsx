@@ -1,7 +1,22 @@
-// YearDataEntry.js
-import React from "react";
+import { Dispatch, SetStateAction } from "react";
 
-function YearDataEntry({ data, setData, label = "Année" }) {
+type YearDataShape = {
+  annee: string;
+};
+
+type YearDataEntryProps<T extends YearDataShape> = {
+  data: T;
+  setData: Dispatch<SetStateAction<T>>;
+  label?: string;
+  required?: boolean;
+};
+
+function YearDataEntry<T extends YearDataShape>({
+  data,
+  setData,
+  label = "Année",
+  required = false,
+}: YearDataEntryProps<T>) {
   return (
     <div className="form-group">
       <label>

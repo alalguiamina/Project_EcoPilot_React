@@ -1,39 +1,39 @@
-import React from 'react';
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import './Login.css';
-import email_icon from '../Assests/email.png';
-import password_icon from '../Assests/password.png';
+import { KeyboardEvent, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import "./Login.css";
+import emailIcon from "../Assests/email.png";
+import passwordIcon from "../Assests/password.png";
+import logo from "../Assests/logo.png";
 
 export const Login = () => {
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const navigate = useNavigate();
-    
-    const handleLogin = () => {
-      if (email && password) {
-        console.log('Email:', email);
-        console.log('Password:', password);
-        navigate('/dashboard');
-      } else {
-        alert('Veuillez remplir tous les champs');
-      }
-    };
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const navigate = useNavigate();
 
-    const handleKeyPress = (e) => {
-      if (e.key === 'Enter') {
-        handleLogin();
-      }
-    };
+  const handleLogin = () => {
+    if (email && password) {
+      console.log("Email:", email);
+      console.log("Password:", password);
+      navigate("/dashboard");
+    } else {
+      alert("Veuillez remplir tous les champs");
+    }
+  };
+
+  const handleKeyPress = (event: KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === "Enter") {
+      handleLogin();
+    }
+  };
 
   return (
     <div className="container">
-      <img src={require('../Assests/logo.png')} alt="App Logo" className="logo" />
+      <img src={logo} alt="App Logo" className="logo" />
       <div className="underline"></div>
 
       <div className="inputs">
         <div className="input">
-          <img src={email_icon} alt="email icon" />
+          <img src={emailIcon} alt="email icon" />
           <input 
             type="email" 
             placeholder="Email"
@@ -44,7 +44,7 @@ export const Login = () => {
         </div>
 
         <div className="input">
-          <img src={password_icon} alt="password icon" />
+          <img src={passwordIcon} alt="password icon" />
           <input 
             type="password" 
             placeholder="Password"
