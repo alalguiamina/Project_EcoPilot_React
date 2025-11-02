@@ -25,6 +25,8 @@ import awardIcon from "../Assests/award.png";
 import KpiCard from "../KpiCard/KpiCard";
 import Sidebar from "Components/Sidebar/Sidebar";
 import { User } from "App";
+import Topbar from "Components/Topbar/Topbar";
+import { usePageTitle } from "hooks/usePageTitle";
 
 type DashboardProps = { user: User };
 
@@ -113,25 +115,19 @@ const kpiCardsData = [
 const Dashboard = ({ user }: DashboardProps) => {
   const navigate = useNavigate();
   const handleLogout = () => navigate("/");
+  const pageTitle = usePageTitle();
+  const topbarProps = {
+    title: pageTitle,
+    userName: "Amina", // user.name
+    onLogout: handleLogout,
+  };
 
   return (
     <div className="dashboard-wrapper">
       <Sidebar />
 
       <div className="dashboard-content">
-        <header className="topbar">
-          <h1 className="topbar-title">Tableau de Bord RSE</h1>
-          <div className="topbar-actions">
-            <div className="user-badge">
-              <span className="user-avatar">👤</span>
-              <span className="user-name">Utilisateur</span>
-            </div>
-            <button className="btn-logout" onClick={handleLogout}>
-              Déconnexion
-            </button>
-          </div>
-        </header>
-
+        <Topbar {...topbarProps} />
         <main className="main-dashboard">
           {/* KPI Cards */}
 

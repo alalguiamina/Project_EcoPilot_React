@@ -7,11 +7,12 @@ import DataEntryPage from "./Components/DataEntryPage/DataEntryPage";
 import CarbonFootprintPage from "./Components/CarbonFootprintPage/CarbonFootprintPage";
 import ESGIndicatorsPage from "./Components/ESGIndicatorsPage/ESGIndicatorsPage";
 import ProtectedRoute from "./Components/ProtectedRoute/ProtectedRoute";
+import Topbar from "Components/Topbar/Topbar";
 
 export type User = { role: "AgentSaisie" | "User" | "SuperUser" | "Admin" };
 
 const App = () => {
-  const [user] = useState<User>({ role: "AgentSaisie" });
+  const [user] = useState<User>({ role: "User" });
 
   return (
     <Router basename={process.env.PUBLIC_URL}>
@@ -21,6 +22,7 @@ const App = () => {
 
           <Route path="/" element={<Login />} />
           {/* Page Dashboard */}
+
           <Route
             path="/dashboard"
             element={

@@ -11,6 +11,9 @@ import YearDataEntry from "Components/YearDataEntry/YearDataEntry";
 import MonthDataEntry from "Components/MonthDataEntry/MonthDataEntry";
 import SiteDataEntry from "Components/SiteDataEntry/SiteDataEntry";
 import { User } from "App";
+import { useNavigate } from "react-router-dom";
+import { usePageTitle } from "hooks/usePageTitle";
+import Topbar from "Components/Topbar/Topbar";
 
 type CategoryId = "energie" | "eau" | "dechets" | "social" | "production";
 
@@ -290,17 +293,21 @@ function DataEntryPage({ user }: { user: User }) {
     const month = mois.find((m) => m.value === value);
     return month ? month.label : value;
   };
+  const navigate = useNavigate();
+  const handleLogout = () => navigate("/");
+  const pageTitle = usePageTitle();
+  const topbarProps = {
+    title: pageTitle,
+    userName: "Amina", // user.name
+    onLogout: handleLogout,
+  };
 
   return (
     <div className="dashboard-wrapper">
       <Sidebar />
       <div className="dashboard-content">
+        <Topbar {...topbarProps} />
         <div className="data-entry-page">
-          <div className="page-header">
-            <h1>Saisie de données</h1>
-            <p>Enregistrez vos données par catégorie</p>
-          </div>
-
           {/* Sélecteur de catégorie */}
           <div className="card">
             <div className="card-header">
@@ -341,8 +348,7 @@ function DataEntryPage({ user }: { user: User }) {
               </div>
             </div>
           </div>
-
-          {/* Formulaires dynamiques */}
+          ){/* Formulaires dynamiques */}
           {selectedCategory && (
             <div className="card form-card">
               <div className="card-header">
@@ -680,7 +686,6 @@ function DataEntryPage({ user }: { user: User }) {
               </div>
             </div>
           )}
-
           {/* Tableau des entrées */}
           {entries.length > 0 && (
             <div className="card">
