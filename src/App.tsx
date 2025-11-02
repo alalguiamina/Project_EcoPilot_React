@@ -7,12 +7,33 @@ import DataEntryPage from "./Components/DataEntryPage/DataEntryPage";
 import CarbonFootprintPage from "./Components/CarbonFootprintPage/CarbonFootprintPage";
 import ESGIndicatorsPage from "./Components/ESGIndicatorsPage/ESGIndicatorsPage";
 import ProtectedRoute from "./Components/ProtectedRoute/ProtectedRoute";
-import Topbar from "Components/Topbar/Topbar";
+import OrganisationPage from "Components/OrganisationPage/OrganisationPage";
+export type UserRole = "AgentSaisie" | "User" | "SuperUser" | "Admin";
 
-export type User = { role: "AgentSaisie" | "User" | "SuperUser" | "Admin" };
+export type User = {
+  role: UserRole;
+  first_name: string;
+  last_name: string;
+  email: string;
+  password: string;
+  username: string;
+  site: string;
+  domaine: string;
+  business_unit: string;
+};
 
 const App = () => {
-  const [user] = useState<User>({ role: "User" });
+  const [user] = useState<User>({
+    role: "User",
+    first_name: "Amina",
+    last_name: "Alalgui",
+    username: "Amina Alalgui",
+    email: "amina@example.com",
+    password: "1234",
+    site: "Settat - Ferme Doukkala",
+    domaine: "AgroMaroc domaine SA",
+    business_unit: "Production agricole",
+  });
 
   return (
     <Router basename={process.env.PUBLIC_URL}>
@@ -52,6 +73,26 @@ const App = () => {
             element={
               <ProtectedRoute user={user}>
                 <ESGIndicatorsPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/organisation"
+            element={
+              <ProtectedRoute user={user}>
+                <OrganisationPage
+                  user={{
+                    role: "AgentSaisie",
+                    first_name: "",
+                    last_name: "",
+                    email: "",
+                    password: "",
+                    username: "",
+                    site: "",
+                    domaine: "",
+                    business_unit: "",
+                  }}
+                />
               </ProtectedRoute>
             }
           />

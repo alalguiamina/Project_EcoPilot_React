@@ -17,6 +17,8 @@ export const usePageTitle = () => {
         return "Bilan Carbone";
       case "/esg":
         return "Indicateurs ESG";
+      case "/organisation":
+        return "Organisation";
       default:
         return "Accueil"; // Default title
     }

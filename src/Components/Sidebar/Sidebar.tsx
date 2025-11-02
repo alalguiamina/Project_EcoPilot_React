@@ -7,6 +7,7 @@ import chartIcon from "../Assests/chart.png";
 import targetIcon from "../Assests/target.png";
 import reportIcon from "../Assests/report.png";
 import settingsIcon from "../Assests/settings.png";
+import organisationIcon from "../Assests/organisation.png";
 import logo from "../Assests/logo.png";
 
 type MenuItem = {
@@ -64,6 +65,14 @@ const Sidebar = () => {
       color: "#b45309",
       path: "/reports",
     },
+    {
+      id: "organisation",
+      label: "Organisation",
+      icon: organisationIcon,
+      color: "#125a8eff",
+      path: "/organisation",
+    },
+
     {
       id: "settings",
       label: "Paramètres",

@@ -240,7 +240,11 @@ function DataEntryPage({ user }: { user: User }) {
         });
         break;
       case "production":
-        if (!productionData.mois || !productionData.site || !productionData.action) {
+        if (
+          !productionData.mois ||
+          !productionData.site ||
+          !productionData.action
+        ) {
           alert("Veuillez remplir tous les champs obligatoires");
           return;
         }
@@ -312,7 +316,9 @@ function DataEntryPage({ user }: { user: User }) {
           <div className="card">
             <div className="card-header">
               <h2>Sélectionner une catégorie</h2>
-              <p className="card-description">Choisissez le type de données à saisir</p>
+              <p className="card-description">
+                Choisissez le type de données à saisir
+              </p>
             </div>
             <div className="card-content">
               <div className="category-grid">
@@ -348,21 +354,37 @@ function DataEntryPage({ user }: { user: User }) {
               </div>
             </div>
           </div>
-          ){/* Formulaires dynamiques */}
+          {/* Formulaires dynamiques */}
           {selectedCategory && (
             <div className="card form-card">
               <div className="card-header">
-                <h2>Formulaire - {categories.find((c) => c.id === selectedCategory)?.name}</h2>
-                <p className="card-description">Remplissez les champs ci-dessous</p>
+                <h2>
+                  Formulaire -{" "}
+                  {categories.find((c) => c.id === selectedCategory)?.name}
+                </h2>
+                <p className="card-description">
+                  Remplissez les champs ci-dessous
+                </p>
               </div>
               <div className="card-content">
                 {/* Formulaire Énergie */}
                 {selectedCategory === "energie" && (
                   <div className="form-grid">
-                    <YearDataEntry data={energieData} setData={setEnergieData} />
+                    <YearDataEntry
+                      data={energieData}
+                      setData={setEnergieData}
+                    />
 
-                    <MonthDataEntry data={energieData} setData={setEnergieData} mois={mois} />
-                    <SiteDataEntry data={energieData} setData={setEnergieData} sites={sites} />
+                    <MonthDataEntry
+                      data={energieData}
+                      setData={setEnergieData}
+                      mois={mois}
+                    />
+                    <SiteDataEntry
+                      data={energieData}
+                      setData={setEnergieData}
+                      sites={sites}
+                    />
 
                     <div className="form-group">
                       <label>Type *</label>
@@ -424,8 +446,16 @@ function DataEntryPage({ user }: { user: User }) {
                 {selectedCategory === "eau" && (
                   <div className="form-grid">
                     <YearDataEntry data={eauData} setData={setEauData} />
-                    <MonthDataEntry data={eauData} setData={setEauData} mois={mois} />
-                    <SiteDataEntry data={eauData} setData={setEauData} sites={sites} />
+                    <MonthDataEntry
+                      data={eauData}
+                      setData={setEauData}
+                      mois={mois}
+                    />
+                    <SiteDataEntry
+                      data={eauData}
+                      setData={setEauData}
+                      sites={sites}
+                    />
 
                     <div className="form-group">
                       <label>Famille de culture</label>
@@ -441,9 +471,13 @@ function DataEntryPage({ user }: { user: User }) {
                         <option value="">Sélectionner</option>
                         <option value="Céréales">Céréales</option>
                         <option value="Oléicole">Oléicole</option>
-                        <option value="Fruits & Légumes">Fruits & Légumes</option>
+                        <option value="Fruits & Légumes">
+                          Fruits & Légumes
+                        </option>
                         <option value="Dattes">Dattes</option>
-                        <option value="Plantes Aromatiques">Plantes Aromatiques</option>
+                        <option value="Plantes Aromatiques">
+                          Plantes Aromatiques
+                        </option>
                       </select>
                     </div>
 
@@ -452,7 +486,9 @@ function DataEntryPage({ user }: { user: User }) {
                       <input
                         type="text"
                         value={eauData.variete}
-                        onChange={(e) => setEauData({ ...eauData, variete: e.target.value })}
+                        onChange={(e) =>
+                          setEauData({ ...eauData, variete: e.target.value })
+                        }
                         placeholder="Ex: Tomate, Blé dur..."
                       />
                     </div>
@@ -462,7 +498,9 @@ function DataEntryPage({ user }: { user: User }) {
                       <input
                         type="number"
                         value={eauData.volumeEau}
-                        onChange={(e) => setEauData({ ...eauData, volumeEau: e.target.value })}
+                        onChange={(e) =>
+                          setEauData({ ...eauData, volumeEau: e.target.value })
+                        }
                         placeholder="0"
                       />
                     </div>
@@ -472,10 +510,21 @@ function DataEntryPage({ user }: { user: User }) {
                 {/* Formulaire Déchets */}
                 {selectedCategory === "dechets" && (
                   <div className="form-grid">
-                    <YearDataEntry data={dechetsData} setData={setDechetsData} />
+                    <YearDataEntry
+                      data={dechetsData}
+                      setData={setDechetsData}
+                    />
 
-                    <MonthDataEntry data={dechetsData} setData={setDechetsData} mois={mois} />
-                    <SiteDataEntry data={dechetsData} setData={setDechetsData} sites={sites} />
+                    <MonthDataEntry
+                      data={dechetsData}
+                      setData={setDechetsData}
+                      mois={mois}
+                    />
+                    <SiteDataEntry
+                      data={dechetsData}
+                      setData={setDechetsData}
+                      sites={sites}
+                    />
 
                     <div className="form-group">
                       <label>Catégorie déchets</label>
@@ -489,12 +538,16 @@ function DataEntryPage({ user }: { user: User }) {
                         }
                       >
                         <option value="">Sélectionner</option>
-                        <option value="Déchets organiques">Déchets organiques</option>
+                        <option value="Déchets organiques">
+                          Déchets organiques
+                        </option>
                         <option value="Plastiques">Plastiques</option>
                         <option value="Carton/Papier">Carton/Papier</option>
                         <option value="Métal">Métal</option>
                         <option value="Verre">Verre</option>
-                        <option value="Déchets dangereux">Déchets dangereux</option>
+                        <option value="Déchets dangereux">
+                          Déchets dangereux
+                        </option>
                       </select>
                     </div>
 
@@ -538,8 +591,16 @@ function DataEntryPage({ user }: { user: User }) {
                   <div className="form-grid">
                     <YearDataEntry data={socialData} setData={setSocialData} />
 
-                    <MonthDataEntry data={socialData} setData={setSocialData} mois={mois} />
-                    <SiteDataEntry data={socialData} setData={setSocialData} sites={sites} />
+                    <MonthDataEntry
+                      data={socialData}
+                      setData={setSocialData}
+                      mois={mois}
+                    />
+                    <SiteDataEntry
+                      data={socialData}
+                      setData={setSocialData}
+                      sites={sites}
+                    />
 
                     <div className="form-group">
                       <label>Action *</label>
@@ -553,13 +614,19 @@ function DataEntryPage({ user }: { user: User }) {
                         }
                       >
                         <option value="">Sélectionner</option>
-                        <option value="Formation professionnelle">Formation professionnelle</option>
+                        <option value="Formation professionnelle">
+                          Formation professionnelle
+                        </option>
                         <option value="Campagne santé">Campagne santé</option>
-                        <option value="Soutien éducatif">Soutien éducatif</option>
+                        <option value="Soutien éducatif">
+                          Soutien éducatif
+                        </option>
                         <option value="Infrastructure communautaire">
                           Infrastructure communautaire
                         </option>
-                        <option value="Création d'emplois">Création d'emplois</option>
+                        <option value="Création d'emplois">
+                          Création d'emplois
+                        </option>
                       </select>
                     </div>
 
@@ -598,8 +665,15 @@ function DataEntryPage({ user }: { user: User }) {
                 {/* Formulaire Production */}
                 {selectedCategory === "production" && (
                   <div className="form-grid">
-                    <YearDataEntry data={productionData} setData={setProductionData} />
-                    <MonthDataEntry data={productionData} setData={setProductionData} mois={mois} />
+                    <YearDataEntry
+                      data={productionData}
+                      setData={setProductionData}
+                    />
+                    <MonthDataEntry
+                      data={productionData}
+                      setData={setProductionData}
+                      mois={mois}
+                    />
                     <SiteDataEntry
                       data={productionData}
                       setData={setProductionData}
@@ -639,10 +713,16 @@ function DataEntryPage({ user }: { user: User }) {
                       >
                         <option value="">Sélectionner</option>
                         <option value="Achat semences">Achat semences</option>
-                        <option value="Système irrigation">Système irrigation</option>
+                        <option value="Système irrigation">
+                          Système irrigation
+                        </option>
                         <option value="Engrais bio">Engrais bio</option>
-                        <option value="Équipement agricole">Équipement agricole</option>
-                        <option value="Certification bio">Certification bio</option>
+                        <option value="Équipement agricole">
+                          Équipement agricole
+                        </option>
+                        <option value="Certification bio">
+                          Certification bio
+                        </option>
                       </select>
                     </div>
 
@@ -810,7 +890,10 @@ function DataEntryPage({ user }: { user: User }) {
                               } bénéf.`}
                           </td>
                           <td>
-                            <button className="btn-delete" onClick={() => handleDelete(entry.id)}>
+                            <button
+                              className="btn-delete"
+                              onClick={() => handleDelete(entry.id)}
+                            >
                               <img
                                 src={deleteIcon}
                                 alt="Delete"
@@ -830,7 +913,8 @@ function DataEntryPage({ user }: { user: User }) {
 
                 {saved && (
                   <div className="success-message">
-                    <span>✓</span> Toutes les données ont été enregistrées avec succès !
+                    <span>✓</span> Toutes les données ont été enregistrées avec
+                    succès !
                   </div>
                 )}
               </div>

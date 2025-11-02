@@ -150,8 +150,12 @@ const Dashboard = ({ user }: DashboardProps) => {
             {/* Pie Chart */}
             <div className="card chart-card">
               <div className="card-header">
-                <h3 className="card-title">Répartition Émissions Carbone par Scope</h3>
-                <p className="card-description">Distribution des émissions GES</p>
+                <h3 className="card-title">
+                  Répartition Émissions Carbone par Scope
+                </h3>
+                <p className="card-description">
+                  Distribution des émissions GES
+                </p>
               </div>
               <div className="card-content" style={{ height: 300 }}>
                 <ResponsiveContainer width="100%" height="100%">
@@ -162,7 +166,8 @@ const Dashboard = ({ user }: DashboardProps) => {
                       cy="50%"
                       labelLine={false}
                       label={({ name, percent }) => {
-                        const safePercent = typeof percent === "number" ? percent : 0;
+                        const safePercent =
+                          typeof percent === "number" ? percent : 0;
                         return `${name}: ${(safePercent * 100).toFixed(0)}%`;
                       }}
                       outerRadius={100}
@@ -182,7 +187,9 @@ const Dashboard = ({ user }: DashboardProps) => {
             <div className="card chart-card">
               <div className="card-header">
                 <h3 className="card-title">Évolution des Indicateurs ESG</h3>
-                <p className="card-description">Performance mensuelle par pilier</p>
+                <p className="card-description">
+                  Performance mensuelle par pilier
+                </p>
               </div>
               <div className="card-content" style={{ height: 300 }}>
                 <ResponsiveContainer width="100%" height="100%">
@@ -202,8 +209,12 @@ const Dashboard = ({ user }: DashboardProps) => {
             {/* Nouvelle courbe d'évolution des émissions carbone */}
             <div className="card chart-card mt-6">
               <div className="card-header">
-                <h3 className="card-title">Évolution mensuelle des émissions carbone</h3>
-                <p className="card-description">Tendance des émissions totales par mois (tCO₂e)</p>
+                <h3 className="card-title">
+                  Évolution mensuelle des émissions carbone
+                </h3>
+                <p className="card-description">
+                  Tendance des émissions totales par mois (tCO₂e)
+                </p>
               </div>
               <div className="card-content">
                 <ResponsiveContainer width="100%" height={300}>
@@ -213,7 +224,12 @@ const Dashboard = ({ user }: DashboardProps) => {
                     <YAxis />
                     <Tooltip />
                     <Legend />
-                    <Line type="monotone" dataKey="emissions" stroke="#f59e0b" strokeWidth={2} />
+                    <Line
+                      type="monotone"
+                      dataKey="emissions"
+                      stroke="#f59e0b"
+                      strokeWidth={2}
+                    />
                   </LineChart>
                 </ResponsiveContainer>
               </div>
@@ -224,7 +240,9 @@ const Dashboard = ({ user }: DashboardProps) => {
           <div className="card chart-card">
             <div className="card-header">
               <h3 className="card-title">Évolution des Émissions Carbone</h3>
-              <p className="card-description">Tendance mensuelle des émissions totales (tCO₂e)</p>
+              <p className="card-description">
+                Tendance mensuelle des émissions totales (tCO₂e)
+              </p>
             </div>
             <div className="card-content" style={{ height: 300 }}>
               <ResponsiveContainer width="100%" height="100%">
@@ -234,7 +252,12 @@ const Dashboard = ({ user }: DashboardProps) => {
                   <YAxis />
                   <Tooltip />
                   <Legend />
-                  <Line type="monotone" dataKey="emissions" stroke="#16a34a" strokeWidth={2} />
+                  <Line
+                    type="monotone"
+                    dataKey="emissions"
+                    stroke="#16a34a"
+                    strokeWidth={2}
+                  />
                 </LineChart>
               </ResponsiveContainer>
             </div>

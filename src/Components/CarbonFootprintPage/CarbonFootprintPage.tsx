@@ -79,8 +79,10 @@ function CarbonFootprintPage() {
             const startAngle = currentAngle;
             const endAngle = currentAngle + angle;
 
-            const x1 = centerX + radius * Math.cos((startAngle * Math.PI) / 180);
-            const y1 = centerY + radius * Math.sin((startAngle * Math.PI) / 180);
+            const x1 =
+              centerX + radius * Math.cos((startAngle * Math.PI) / 180);
+            const y1 =
+              centerY + radius * Math.sin((startAngle * Math.PI) / 180);
             const x2 = centerX + radius * Math.cos((endAngle * Math.PI) / 180);
             const y2 = centerY + radius * Math.sin((endAngle * Math.PI) / 180);
 
@@ -97,8 +99,10 @@ function CarbonFootprintPage() {
 
             // Calculate label position
             const labelAngle = startAngle + angle / 2;
-            const labelX = centerX + radius * 0.7 * Math.cos((labelAngle * Math.PI) / 180);
-            const labelY = centerY + radius * 0.7 * Math.sin((labelAngle * Math.PI) / 180);
+            const labelX =
+              centerX + radius * 0.7 * Math.cos((labelAngle * Math.PI) / 180);
+            const labelY =
+              centerY + radius * 0.7 * Math.sin((labelAngle * Math.PI) / 180);
 
             return (
               <g key={index}>
@@ -121,7 +125,10 @@ function CarbonFootprintPage() {
         <div className="pie-legend">
           {scopeData.map((item, index) => (
             <div key={index} className="legend-item">
-              <div className="legend-color" style={{ backgroundColor: item.color }}></div>
+              <div
+                className="legend-color"
+                style={{ backgroundColor: item.color }}
+              ></div>
               <span>
                 {item.name}: {item.value.toFixed(1)} tCO₂e
               </span>
@@ -141,11 +148,15 @@ function CarbonFootprintPage() {
     const chartHeight = height - 2 * padding;
 
     const maxEmissions = Math.max(
-      ...evolutionData.map((datum) => Math.max(datum.emissions, datum.objectif))
+      ...evolutionData.map((datum) =>
+        Math.max(datum.emissions, datum.objectif),
+      ),
     );
 
-    const xScale = (index: number) => padding + (index / (evolutionData.length - 1)) * chartWidth;
-    const yScale = (value: number) => padding + chartHeight - (value / maxEmissions) * chartHeight;
+    const xScale = (index: number) =>
+      padding + (index / (evolutionData.length - 1)) * chartWidth;
+    const yScale = (value: number) =>
+      padding + chartHeight - (value / maxEmissions) * chartHeight;
 
     return (
       <div className="line-chart-container">
@@ -171,7 +182,13 @@ function CarbonFootprintPage() {
             y2={height - padding}
             stroke="#94a3b8"
           />
-          <line x1={padding} y1={padding} x2={padding} y2={height - padding} stroke="#94a3b8" />
+          <line
+            x1={padding}
+            y1={padding}
+            x2={padding}
+            y2={height - padding}
+            stroke="#94a3b8"
+          />
 
           {/* X axis labels */}
           {evolutionData.map((d, i) => (
@@ -204,7 +221,9 @@ function CarbonFootprintPage() {
 
           {/* Emissions line */}
           <polyline
-            points={evolutionData.map((d, i) => `${xScale(i)},${yScale(d.emissions)}`).join(" ")}
+            points={evolutionData
+              .map((d, i) => `${xScale(i)},${yScale(d.emissions)}`)
+              .join(" ")}
             fill="none"
             stroke="#16a34a"
             strokeWidth="2"
@@ -223,7 +242,9 @@ function CarbonFootprintPage() {
 
           {/* Objective line */}
           <polyline
-            points={evolutionData.map((d, i) => `${xScale(i)},${yScale(d.objectif)}`).join(" ")}
+            points={evolutionData
+              .map((d, i) => `${xScale(i)},${yScale(d.objectif)}`)
+              .join(" ")}
             fill="none"
             stroke="#f59e0b"
             strokeWidth="2"
@@ -244,7 +265,10 @@ function CarbonFootprintPage() {
 
         <div className="chart-legend">
           <div className="legend-item">
-            <div className="legend-line" style={{ backgroundColor: "#16a34a" }}></div>
+            <div
+              className="legend-line"
+              style={{ backgroundColor: "#16a34a" }}
+            ></div>
             <span>Émissions réelles</span>
           </div>
           <div className="legend-item">
@@ -320,12 +344,19 @@ function CarbonFootprintPage() {
           {data.map((d, i) => {
             const barHeight = (d.emissions / maxEmissions) * chartHeight;
             const barY = height - padding.bottom - barHeight;
-            const barX = padding.left + (i + 0.5) * (chartWidth / data.length) - 30;
+            const barX =
+              padding.left + (i + 0.5) * (chartWidth / data.length) - 30;
             const barWidth = 60;
 
             return (
               <g key={i}>
-                <rect x={barX} y={barY} width={barWidth} height={barHeight} fill={color} />
+                <rect
+                  x={barX}
+                  y={barY}
+                  width={barWidth}
+                  height={barHeight}
+                  fill={color}
+                />
                 <text
                   x={barX + barWidth / 2}
                   y={height - padding.bottom + 20}
@@ -411,7 +442,8 @@ function CarbonFootprintPage() {
               <div className="card-header">
                 <h2>Répartition par Scope</h2>
                 <p className="card-description">
-                  Distribution des émissions GES ({totalEmissions.toFixed(1)} tCO₂e)
+                  Distribution des émissions GES ({totalEmissions.toFixed(1)}{" "}
+                  tCO₂e)
                 </p>
               </div>
               <div className="card-content">{renderPieChart()}</div>
@@ -420,7 +452,9 @@ function CarbonFootprintPage() {
             <div className="card">
               <div className="card-header">
                 <h2>Évolution mensuelle</h2>
-                <p className="card-description">Tendance des émissions vs objectif</p>
+                <p className="card-description">
+                  Tendance des émissions vs objectif
+                </p>
               </div>
               <div className="card-content">{renderLineChart()}</div>
             </div>
@@ -460,7 +494,9 @@ function CarbonFootprintPage() {
                     <div className="tab-pane">
                       <div className="scope-info">
                         <div className="scope-indicator green"></div>
-                        <span>Émissions directes contrôlées par l'entreprise</span>
+                        <span>
+                          Émissions directes contrôlées par l'entreprise
+                        </span>
                       </div>
                       {renderBarChart(scope1Details, "#16a34a")}
                       <div className="scope-summary green">
@@ -469,8 +505,8 @@ function CarbonFootprintPage() {
                           {scopeData[0].value.toFixed(1)} tCO₂e
                         </p>
                         <p className="scope-actions">
-                          Principales actions: Optimisation du parc véhicule, maintenance des
-                          équipements, réduction des fuites
+                          Principales actions: Optimisation du parc véhicule,
+                          maintenance des équipements, réduction des fuites
                         </p>
                       </div>
                     </div>
@@ -480,7 +516,9 @@ function CarbonFootprintPage() {
                     <div className="tab-pane">
                       <div className="scope-info">
                         <div className="scope-indicator blue"></div>
-                        <span>Émissions indirectes liées à l'énergie achetée</span>
+                        <span>
+                          Émissions indirectes liées à l'énergie achetée
+                        </span>
                       </div>
                       {renderBarChart(scope2Details, "#3b82f6")}
                       <div className="scope-summary blue">
@@ -489,8 +527,9 @@ function CarbonFootprintPage() {
                           {scopeData[1].value.toFixed(1)} tCO₂e
                         </p>
                         <p className="scope-actions">
-                          Principales actions: Installation de panneaux solaires, achat
-                          d'électricité verte, efficacité énergétique
+                          Principales actions: Installation de panneaux
+                          solaires, achat d'électricité verte, efficacité
+                          énergétique
                         </p>
                       </div>
                     </div>
@@ -500,7 +539,9 @@ function CarbonFootprintPage() {
                     <div className="tab-pane">
                       <div className="scope-info">
                         <div className="scope-indicator orange"></div>
-                        <span>Autres émissions indirectes de la chaîne de valeur</span>
+                        <span>
+                          Autres émissions indirectes de la chaîne de valeur
+                        </span>
                       </div>
                       {renderBarChart(scope3Details, "#f59e0b")}
                       <div className="scope-summary orange">
@@ -509,8 +550,8 @@ function CarbonFootprintPage() {
                           {scopeData[2].value.toFixed(1)} tCO₂e
                         </p>
                         <p className="scope-actions">
-                          Principales actions: Optimisation logistique, fournisseurs locaux,
-                          économie circulaire, télétravail
+                          Principales actions: Optimisation logistique,
+                          fournisseurs locaux, économie circulaire, télétravail
                         </p>
                       </div>
                     </div>
