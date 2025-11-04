@@ -1,6 +1,7 @@
 import { useState } from "react";
 import "./CarbonFootprintPage.css";
 import Sidebar from "../Sidebar/Sidebar";
+import { User } from "App";
 
 type ActiveTab = "scope1" | "scope2" | "scope3";
 
@@ -21,7 +22,7 @@ type ScopeDetail = {
   emissions: number;
 };
 
-function CarbonFootprintPage() {
+function CarbonFootprintPage({ user }: { user: User }) {
   const [activeTab, setActiveTab] = useState<ActiveTab>("scope1");
 
   const scopeData: ScopeDatum[] = [
@@ -386,19 +387,7 @@ function CarbonFootprintPage() {
 
   return (
     <div className="dashboard-wrapper">
-      <Sidebar
-        user={{
-          role: "User",
-          first_name: "",
-          last_name: "",
-          email: "",
-          password: "",
-          username: "",
-          site: "",
-          domaine: "",
-          business_unit: "",
-        }}
-      />
+      <Sidebar user={user} />
       <div className="dashboard-content">
         <div className="carbon-footprint-page">
           <div className="page-header">

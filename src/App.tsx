@@ -64,7 +64,7 @@ const App = () => {
             path="/carbon"
             element={
               <ProtectedRoute user={user}>
-                <CarbonFootprintPage />
+                <CarbonFootprintPage user={user} />
               </ProtectedRoute>
             }
           />
