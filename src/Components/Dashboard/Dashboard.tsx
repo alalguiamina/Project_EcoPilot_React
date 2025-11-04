@@ -130,7 +130,6 @@ const Dashboard = ({ user }: DashboardProps) => {
         <Topbar {...topbarProps} />
         <main className="main-dashboard">
           {/* KPI Cards */}
-
           <div className="kpi-cards-grid">
             {kpiCardsData.map((item) => {
               return (
@@ -148,7 +147,7 @@ const Dashboard = ({ user }: DashboardProps) => {
           {/* Charts Grid */}
           <div className="charts-2-col">
             {/* Pie Chart */}
-            <div className="card chart-card">
+            <div className="card chart-card" style={{ minHeight: "400px" }}>
               <div className="card-header">
                 <h3 className="card-title">
                   Répartition Émissions Carbone par Scope
@@ -157,7 +156,7 @@ const Dashboard = ({ user }: DashboardProps) => {
                   Distribution des émissions GES
                 </p>
               </div>
-              <div className="card-content" style={{ height: 300 }}>
+              <div className="card-content" style={{ height: "300px" }}>
                 <ResponsiveContainer width="100%" height="100%">
                   <PieChart>
                     <Pie
@@ -184,14 +183,14 @@ const Dashboard = ({ user }: DashboardProps) => {
             </div>
 
             {/* Bar Chart */}
-            <div className="card chart-card">
+            <div className="card chart-card" style={{ minHeight: "400px" }}>
               <div className="card-header">
                 <h3 className="card-title">Évolution des Indicateurs ESG</h3>
                 <p className="card-description">
                   Performance mensuelle par pilier
                 </p>
               </div>
-              <div className="card-content" style={{ height: 300 }}>
+              <div className="card-content" style={{ height: "300px" }}>
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart data={barData}>
                     <CartesianGrid strokeDasharray="3 3" />
@@ -206,45 +205,17 @@ const Dashboard = ({ user }: DashboardProps) => {
                 </ResponsiveContainer>
               </div>
             </div>
-            {/* Nouvelle courbe d'évolution des émissions carbone */}
-            <div className="card chart-card mt-6">
-              <div className="card-header">
-                <h3 className="card-title">
-                  Évolution mensuelle des émissions carbone
-                </h3>
-                <p className="card-description">
-                  Tendance des émissions totales par mois (tCO₂e)
-                </p>
-              </div>
-              <div className="card-content">
-                <ResponsiveContainer width="100%" height={300}>
-                  <LineChart data={emissionsData}>
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="mois" />
-                    <YAxis />
-                    <Tooltip />
-                    <Legend />
-                    <Line
-                      type="monotone"
-                      dataKey="emissions"
-                      stroke="#f59e0b"
-                      strokeWidth={2}
-                    />
-                  </LineChart>
-                </ResponsiveContainer>
-              </div>
-            </div>
           </div>
 
           {/* Line Chart Full Width */}
-          <div className="card chart-card">
+          <div className="card chart-card" style={{ minHeight: "400px" }}>
             <div className="card-header">
               <h3 className="card-title">Évolution des Émissions Carbone</h3>
               <p className="card-description">
                 Tendance mensuelle des émissions totales (tCO₂e)
               </p>
             </div>
-            <div className="card-content" style={{ height: 300 }}>
+            <div className="card-content" style={{ height: "300px" }}>
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart data={lineData}>
                   <CartesianGrid strokeDasharray="3 3" />
