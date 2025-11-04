@@ -138,6 +138,7 @@
 
 .form-grid {
   display: grid;
+  align-items: center;
   grid-template-columns: repeat(3, 1fr);
   gap: 16px;
 }
@@ -216,6 +217,7 @@
    ========================= */
 .table-container {
   width: 100%;
+  text-align: center;
   overflow-x: auto;
   border-radius: 8px;
   border: 1px solid #e2e8f0;
@@ -229,8 +231,8 @@
 .table-container th {
   background: #f8fafc;
   padding: 20px 16px;
-  text-align: left;
-  font-size: 14px;
+  text-align: center;
+  font-size: 16px;
   font-weight: 600;
   color: #334155;
   border-bottom: 1px solid #e2e8f0;
@@ -248,7 +250,7 @@
 }
 
 .table-container tr:hover {
-  background: #f8fafc;
+  background: #f6fff4;
 }
 
 /* =========================
