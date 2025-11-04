@@ -312,7 +312,7 @@ const OrganisationPage = ({ user }: OrganisationPageProps) => {
                     <span className="icon">🏢</span>
                   </div>
                   <div>
-                    <h3>Les Organisations</h3>
+                    <h3>Entités</h3>
                     <p>Gestion des sites, domaines et unités commerciales</p>
                   </div>
                 </div>
@@ -344,14 +344,13 @@ const OrganisationPage = ({ user }: OrganisationPageProps) => {
                         onClick={() => setActiveTab("domaines")}
                       >
                         <Building2 className="w-4 h-4 mr-2" />
-                        Domains
+                        Domaines
                       </button>
                       <button
                         className={`tab-button ${activeTab === "business-units" ? "active" : ""}`}
                         onClick={() => setActiveTab("business-units")}
                       >
-                        <Users className="w-4 h-4 mr-2" />
-                        Business Units
+                        <Users className="w-4 h-4 mr-2" /> Business Units
                       </button>
                     </div>
 
@@ -658,27 +657,27 @@ const OrganisationPage = ({ user }: OrganisationPageProps) => {
 
               {expandedPanel === "users" && (
                 <div className="expandable-content">
-                  <div className="panel-header-actions">
-                    <button
-                      className="btn-primary"
-                      onClick={() => setIsAddDialogOpen(true)}
-                    >
-                      <Plus className="w-4 h-4 mr-2" />
-                      Ajouter
-                    </button>
-                  </div>
+                  <div className="panel-header-row">
+                    <div className="toolbar">
+                      <div className="search-bar">
+                        <Search className="search-icon" />
+                        <input
+                          type="text"
+                          value={searchQuery}
+                          onChange={(e) => setSearchQuery(e.target.value)}
+                          placeholder="Rechercher un utilisateur..."
+                        />
+                      </div>
 
-                  {/* Search Bar */}
-                  <div className="search-bar">
-                    <Search className="search-icon" />
-                    <input
-                      type="text"
-                      value={searchQuery}
-                      onChange={(e) => setSearchQuery(e.target.value)}
-                      placeholder="Search users..."
-                    />
+                      <button
+                        className="btn-primary"
+                        onClick={() => setIsAddDialogOpen(true)}
+                      >
+                        <Plus className="w-4 h-4 mr-2" />
+                        Ajouter
+                      </button>
+                    </div>
                   </div>
-
                   {/* Users Table */}
                   <div className="table-container">
                     <table>
