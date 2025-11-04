@@ -386,7 +386,19 @@ function CarbonFootprintPage() {
 
   return (
     <div className="dashboard-wrapper">
-      <Sidebar />
+      <Sidebar
+        user={{
+          role: "User",
+          first_name: "",
+          last_name: "",
+          email: "",
+          password: "",
+          username: "",
+          site: "",
+          domaine: "",
+          business_unit: "",
+        }}
+      />
       <div className="dashboard-content">
         <div className="carbon-footprint-page">
           <div className="page-header">

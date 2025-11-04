@@ -9,6 +9,11 @@ import reportIcon from "../Assests/report.png";
 import settingsIcon from "../Assests/settings.png";
 import organisationIcon from "../Assests/organisation.png";
 import logo from "../Assests/logo.png";
+import { User } from "App";
+
+interface SidebarProps {
+  user: User;
+}
 
 type MenuItem = {
   id: string;
@@ -16,9 +21,10 @@ type MenuItem = {
   icon: string;
   color: string;
   path: string;
+  adminOnly?: boolean;
 };
 
-const Sidebar = () => {
+const Sidebar = ({ user }: SidebarProps) => {
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -71,6 +77,7 @@ const Sidebar = () => {
       icon: organisationIcon,
       color: "#125a8eff",
       path: "/organisation",
+      adminOnly: true,
     },
 
     {
@@ -84,6 +91,10 @@ const Sidebar = () => {
 
   // Détermine la page active selon l'URL
   const isActive = (path: string) => location.pathname === path;
+  // Filter menu items based on user role
+  const filteredMenuItems = menuItems.filter(
+    (item) => !item.adminOnly || user.role === "Admin",
+  );
 
   return (
     <aside className="sidebar">
@@ -92,7 +103,7 @@ const Sidebar = () => {
       </div>
 
       <nav className="sidebar-nav">
-        {menuItems.map((item) => (
+        {filteredMenuItems.map((item) => (
           <button
             key={item.id}
             onClick={() => navigate(item.path)}

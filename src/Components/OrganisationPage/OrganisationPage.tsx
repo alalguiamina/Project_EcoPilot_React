@@ -10,6 +10,8 @@ import {
   Trash2,
   Plus,
   X,
+  ChevronDown,
+  ChevronUp,
 } from "lucide-react";
 import { User } from "App";
 import Sidebar from "Components/Sidebar/Sidebar";
@@ -60,6 +62,11 @@ const OrganisationPage = ({ user }: OrganisationPageProps) => {
     userName: user.first_name || "User",
     onLogout: handleLogout,
   };
+
+  // Panel expansion states
+  const [expandedPanel, setExpandedPanel] = useState<"org" | "users" | null>(
+    null,
+  );
 
   // Sites state
   const [sites, setSites] = useState<Site[]>([
@@ -230,377 +237,497 @@ const OrganisationPage = ({ user }: OrganisationPageProps) => {
     setUsers(users.filter((user) => user.id !== id));
   };
 
+  const Badge = ({
+    children,
+    className = "",
+  }: {
+    children: React.ReactNode;
+    className?: string;
+  }) => {
+    return <span className={`badge ${className}`.trim()}>{children}</span>;
+  };
+
   return (
     <div className="dashboard-wrapper">
-      <Sidebar />
+      <Sidebar user={user} />
 
       <div className="dashboard-content">
         <Topbar {...topbarProps} />
         <main className="main-dashboard">
-          {/* Organisation Entities Section */}
-          <div className="card">
-            <div className="card org-entities-card"></div>
-            <div className="card-header">
-              <h2 className="card-title">Les Organisations</h2>
+          <div className="organisation-page">
+            <div className="page-header">
+              <h1>Organisation</h1>
+              <p>Gestion des entités organisationnelles et des utilisateurs</p>
             </div>
-            <div className="card-content">
-              {/* Tabs */}
-              <div className="tabs-container">
-                <div className="tabs-list">
-                  <button
-                    className={`tab-button ${activeTab === "sites" ? "active" : ""}`}
-                    onClick={() => setActiveTab("sites")}
-                  >
-                    <MapPin className="w-4 h-4 mr-2" />
-                    Sites
-                  </button>
-                  <button
-                    className={`tab-button ${activeTab === "domaines" ? "active" : ""}`}
-                    onClick={() => setActiveTab("domaines")}
-                  >
-                    <Building2 className="w-4 h-4 mr-2" />
-                    Domains
-                  </button>
-                  <button
-                    className={`tab-button ${activeTab === "business-units" ? "active" : ""}`}
-                    onClick={() => setActiveTab("business-units")}
-                  >
-                    <Users className="w-4 h-4 mr-2" />
-                    Business Units
-                  </button>
+
+            {/* Score cards */}
+            <div className="score-cards-grid">
+              <div className="score-card">
+                <div className="score-card-header">
+                  <span className="score-label">Sites</span>
+                  <span className="score-icon">📍</span>
                 </div>
-
-                {/* Sites Tab */}
-                {activeTab === "sites" && (
-                  <div className="tab-content">
-                    <div className="form-section">
-                      <div className="form-grid">
-                        <div className="form-field">
-                          <label htmlFor="site-name">Site Name</label>
-                          <input
-                            id="site-name"
-                            type="text"
-                            value={newSite.name}
-                            onChange={(e) =>
-                              setNewSite({ ...newSite, name: e.target.value })
-                            }
-                            placeholder="Enter site name"
-                          />
-                        </div>
-                        <div className="form-field">
-                          <label htmlFor="site-location">Location</label>
-                          <input
-                            id="site-location"
-                            type="text"
-                            value={newSite.location}
-                            onChange={(e) =>
-                              setNewSite({
-                                ...newSite,
-                                location: e.target.value,
-                              })
-                            }
-                            placeholder="Enter location"
-                          />
-                        </div>
-                        <div className="form-field">
-                          <label htmlFor="site-surface">Surface</label>
-                          <div className="input-with-button">
-                            <input
-                              id="site-surface"
-                              type="text"
-                              value={newSite.surface}
-                              onChange={(e) =>
-                                setNewSite({
-                                  ...newSite,
-                                  surface: e.target.value,
-                                })
-                              }
-                              placeholder="Enter surface"
-                            />
-                            <button onClick={handleAddSite} className="btn-add">
-                              <Plus className="w-4 h-4" />
-                            </button>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="table-container">
-                      <table>
-                        <thead>
-                          <tr>
-                            <th>Site Name</th>
-                            <th>Location</th>
-                            <th>Surface</th>
-                            <th>Actions</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {sites.map((site) => (
-                            <tr key={site.id}>
-                              <td>{site.name}</td>
-                              <td>{site.location}</td>
-                              <td>{site.surface}</td>
-                              <td>
-                                <div className="action-buttons">
-                                  <button className="btn-icon btn-edit">
-                                    <Edit className="w-4 h-4" />
-                                  </button>
-                                  <button
-                                    className="btn-icon btn-delete"
-                                    onClick={() => handleDeleteSite(site.id)}
-                                  >
-                                    <Trash2 className="w-4 h-4" />
-                                  </button>
-                                </div>
-                              </td>
-                            </tr>
-                          ))}
-                        </tbody>
-                      </table>
-                    </div>
-                  </div>
-                )}
-
-                {/* Domaines Tab */}
-                {activeTab === "domaines" && (
-                  <div className="tab-content">
-                    <div className="form-section">
-                      <h3>Add New Domain</h3>
-                      <div className="form-grid">
-                        <div className="form-field">
-                          <label htmlFor="domaine-name">Domain Name</label>
-                          <input
-                            id="domaine-name"
-                            type="text"
-                            value={newDomaine.name}
-                            onChange={(e) =>
-                              setNewDomaine({
-                                ...newDomaine,
-                                name: e.target.value,
-                              })
-                            }
-                            placeholder="Enter domain name"
-                          />
-                        </div>
-                        <div className="form-field">
-                          <label htmlFor="domaine-type">Type</label>
-                          <div className="input-with-button">
-                            <input
-                              id="domaine-type"
-                              type="text"
-                              value={newDomaine.type}
-                              onChange={(e) =>
-                                setNewDomaine({
-                                  ...newDomaine,
-                                  type: e.target.value,
-                                })
-                              }
-                              placeholder="Enter type"
-                            />
-                            <button
-                              onClick={handleAddDomaine}
-                              className="btn-add"
-                            >
-                              <Plus className="w-4 h-4" />
-                            </button>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="table-container">
-                      <table>
-                        <thead>
-                          <tr>
-                            <th>Domain Name</th>
-                            <th>Type</th>
-                            <th>Actions</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {domaines.map((domaine) => (
-                            <tr key={domaine.id}>
-                              <td>{domaine.name}</td>
-                              <td>{domaine.type}</td>
-                              <td>
-                                <div className="action-buttons">
-                                  <button className="btn-icon btn-edit">
-                                    <Edit className="w-4 h-4" />
-                                  </button>
-                                  <button
-                                    className="btn-icon btn-delete"
-                                    onClick={() =>
-                                      handleDeleteDomaine(domaine.id)
-                                    }
-                                  >
-                                    <Trash2 className="w-4 h-4" />
-                                  </button>
-                                </div>
-                              </td>
-                            </tr>
-                          ))}
-                        </tbody>
-                      </table>
-                    </div>
-                  </div>
-                )}
-
-                {/* Business Units Tab */}
-                {activeTab === "business-units" && (
-                  <div className="tab-content">
-                    <div className="form-section">
-                      <h3>Add New Business Unit</h3>
-                      <div className="form-grid">
-                        <div className="form-field">
-                          <label htmlFor="bu-name">BU Name</label>
-                          <input
-                            id="bu-name"
-                            type="text"
-                            value={newBU.name}
-                            onChange={(e) =>
-                              setNewBU({ ...newBU, name: e.target.value })
-                            }
-                            placeholder="Enter BU name"
-                          />
-                        </div>
-                        <div className="form-field">
-                          <label htmlFor="bu-description">Description</label>
-                          <div className="input-with-button">
-                            <input
-                              id="bu-description"
-                              type="text"
-                              value={newBU.description}
-                              onChange={(e) =>
-                                setNewBU({
-                                  ...newBU,
-                                  description: e.target.value,
-                                })
-                              }
-                              placeholder="Enter description"
-                            />
-                            <button onClick={handleAddBU} className="btn-add">
-                              <Plus className="w-4 h-4" />
-                            </button>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="table-container">
-                      <table>
-                        <thead>
-                          <tr>
-                            <th>BU Name</th>
-                            <th>Description</th>
-                            <th>Actions</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {businessUnits.map((bu) => (
-                            <tr key={bu.id}>
-                              <td>{bu.name}</td>
-                              <td>{bu.description}</td>
-                              <td>
-                                <div className="action-buttons">
-                                  <button className="btn-icon btn-edit">
-                                    <Edit className="w-4 h-4" />
-                                  </button>
-                                  <button
-                                    className="btn-icon btn-delete"
-                                    onClick={() => handleDeleteBU(bu.id)}
-                                  >
-                                    <Trash2 className="w-4 h-4" />
-                                  </button>
-                                </div>
-                              </td>
-                            </tr>
-                          ))}
-                        </tbody>
-                      </table>
-                    </div>
-                  </div>
-                )}
+                <div className="score-value blue">{sites.length}</div>
+                <p className="score-change">Actifs</p>
               </div>
-            </div>
-          </div>
 
-          {/* User Management Section */}
-          <div className="card">
-            <div className="card user-management-card"></div>
-            <div className="card-header">
-              <div className="card-header-flex">
-                <div>
-                  <h2 className="card-title">Gestion d'Utilisateur</h2>
+              <div className="score-card">
+                <div className="score-card-header">
+                  <span className="score-label">Domaines</span>
+                  <span className="score-icon">🏭</span>
                 </div>
-                <button
-                  className="btn-primary"
-                  onClick={() => setIsAddDialogOpen(true)}
-                >
-                  <Plus className="w-4 h-4 mr-2" />
-                  Add User
-                </button>
-              </div>
-            </div>
-            <div className="card-content">
-              {/* Search Bar */}
-              <div className="search-bar">
-                <Search className="search-icon" />
-                <input
-                  type="text"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Search users..."
-                />
+                <div className="score-value green">{domaines.length}</div>
+                <p className="score-change">En production</p>
               </div>
 
-              {/* Users Table */}
-              <div className="table-container">
-                <table>
-                  <thead>
-                    <tr>
-                      <th>Username</th>
-                      <th>Full Name</th>
-                      <th>Email</th>
-                      <th>Site</th>
-                      <th>Role</th>
-                      <th>Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {filteredUsers.map((user) => (
-                      <tr key={user.id}>
-                        <td>{user.username}</td>
-                        <td>
-                          {user.firstName} {user.lastName}
-                        </td>
-                        <td>{user.email}</td>
-                        <td>{user.site}</td>
-                        <td>
-                          <span
-                            className={`role-badge ${user.role.toLowerCase().replace(" ", "-")}`}
-                          >
-                            {user.role}
-                          </span>
-                        </td>
-                        <td>
-                          <div className="action-buttons">
-                            <button className="btn-icon btn-edit">
-                              <Edit className="w-4 h-4" />
-                            </button>
-                            <button
-                              className="btn-icon btn-delete"
-                              onClick={() => handleDeleteUser(user.id)}
-                            >
-                              <Trash2 className="w-4 h-4" />
-                            </button>
-                          </div>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+              <div className="score-card">
+                <div className="score-card-header">
+                  <span className="score-label">Business Units</span>
+                  <span className="score-icon">👥</span>
+                </div>
+                <div className="score-value purple">{businessUnits.length}</div>
+                <p className="score-change">Opérationnelles</p>
               </div>
+
+              <div className="score-card">
+                <div className="score-card-header">
+                  <span className="score-label">Utilisateurs</span>
+                  <span className="score-icon">👤</span>
+                </div>
+                <div className="score-value orange">{users.length}</div>
+                <p className="score-change">Actifs</p>
+              </div>
+            </div>
+
+            {/* Organisation Panel */}
+            <div className="expandable-card">
+              <button
+                onClick={() =>
+                  setExpandedPanel(expandedPanel === "org" ? null : "org")
+                }
+                className="expandable-header"
+              >
+                <div className="expandable-title">
+                  <div className="icon-container blue">
+                    <span className="icon">🏢</span>
+                  </div>
+                  <div>
+                    <h3>Les Organisations</h3>
+                    <p>Gestion des sites, domaines et unités commerciales</p>
+                  </div>
+                </div>
+                <div className="expandable-metrics">
+                  <div className="metric-value blue">
+                    {sites.length + domaines.length + businessUnits.length}
+                  </div>
+                  <p className="metric-label">Entités totales</p>
+                  <span className="expand-icon">
+                    {expandedPanel === "org" ? <ChevronUp /> : <ChevronDown />}
+                  </span>
+                </div>
+              </button>
+
+              {expandedPanel === "org" && (
+                <div className="expandable-content">
+                  {/* Tabs */}
+                  <div className="tabs-container">
+                    <div className="tabs-list">
+                      <button
+                        className={`tab-button ${activeTab === "sites" ? "active" : ""}`}
+                        onClick={() => setActiveTab("sites")}
+                      >
+                        <MapPin className="w-4 h-4 mr-2" />
+                        Sites
+                      </button>
+                      <button
+                        className={`tab-button ${activeTab === "domaines" ? "active" : ""}`}
+                        onClick={() => setActiveTab("domaines")}
+                      >
+                        <Building2 className="w-4 h-4 mr-2" />
+                        Domains
+                      </button>
+                      <button
+                        className={`tab-button ${activeTab === "business-units" ? "active" : ""}`}
+                        onClick={() => setActiveTab("business-units")}
+                      >
+                        <Users className="w-4 h-4 mr-2" />
+                        Business Units
+                      </button>
+                    </div>
+
+                    {/* Sites Tab */}
+                    {activeTab === "sites" && (
+                      <div className="tab-content">
+                        <div className="form-section">
+                          <div className="form-grid">
+                            <div className="form-field">
+                              <label htmlFor="site-name">Site Name</label>
+                              <input
+                                id="site-name"
+                                type="text"
+                                value={newSite.name}
+                                onChange={(e) =>
+                                  setNewSite({
+                                    ...newSite,
+                                    name: e.target.value,
+                                  })
+                                }
+                                placeholder="Enter site name"
+                              />
+                            </div>
+                            <div className="form-field">
+                              <label htmlFor="site-location">Location</label>
+                              <input
+                                id="site-location"
+                                type="text"
+                                value={newSite.location}
+                                onChange={(e) =>
+                                  setNewSite({
+                                    ...newSite,
+                                    location: e.target.value,
+                                  })
+                                }
+                                placeholder="Enter location"
+                              />
+                            </div>
+                            <div className="form-field">
+                              <label htmlFor="site-surface">Surface</label>
+                              <div className="input-with-button">
+                                <input
+                                  id="site-surface"
+                                  type="text"
+                                  value={newSite.surface}
+                                  onChange={(e) =>
+                                    setNewSite({
+                                      ...newSite,
+                                      surface: e.target.value,
+                                    })
+                                  }
+                                  placeholder="Enter surface"
+                                />
+                                <button
+                                  onClick={handleAddSite}
+                                  className="btn-add"
+                                >
+                                  <Plus className="w-4 h-4" />
+                                </button>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="table-container">
+                          <table>
+                            <thead>
+                              <tr>
+                                <th>Site Name</th>
+                                <th>Location</th>
+                                <th>Surface</th>
+                                <th>Actions</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {sites.map((site) => (
+                                <tr key={site.id}>
+                                  <td>{site.name}</td>
+                                  <td>{site.location}</td>
+                                  <td>{site.surface}</td>
+                                  <td>
+                                    <div className="action-buttons">
+                                      <button className="btn-icon btn-edit">
+                                        <Edit className="w-4 h-4" />
+                                      </button>
+                                      <button
+                                        className="btn-icon btn-delete"
+                                        onClick={() =>
+                                          handleDeleteSite(site.id)
+                                        }
+                                      >
+                                        <Trash2 className="w-4 h-4" />
+                                      </button>
+                                    </div>
+                                  </td>
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Domaines Tab */}
+                    {activeTab === "domaines" && (
+                      <div className="tab-content">
+                        <div className="form-section">
+                          <h3>Add New Domain</h3>
+                          <div className="form-grid">
+                            <div className="form-field">
+                              <label htmlFor="domaine-name">Domain Name</label>
+                              <input
+                                id="domaine-name"
+                                type="text"
+                                value={newDomaine.name}
+                                onChange={(e) =>
+                                  setNewDomaine({
+                                    ...newDomaine,
+                                    name: e.target.value,
+                                  })
+                                }
+                                placeholder="Enter domain name"
+                              />
+                            </div>
+                            <div className="form-field">
+                              <label htmlFor="domaine-type">Type</label>
+                              <div className="input-with-button">
+                                <input
+                                  id="domaine-type"
+                                  type="text"
+                                  value={newDomaine.type}
+                                  onChange={(e) =>
+                                    setNewDomaine({
+                                      ...newDomaine,
+                                      type: e.target.value,
+                                    })
+                                  }
+                                  placeholder="Enter type"
+                                />
+                                <button
+                                  onClick={handleAddDomaine}
+                                  className="btn-add"
+                                >
+                                  <Plus className="w-4 h-4" />
+                                </button>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="table-container">
+                          <table>
+                            <thead>
+                              <tr>
+                                <th>Domain Name</th>
+                                <th>Type</th>
+                                <th>Actions</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {domaines.map((domaine) => (
+                                <tr key={domaine.id}>
+                                  <td>{domaine.name}</td>
+                                  <td>{domaine.type}</td>
+                                  <td>
+                                    <div className="action-buttons">
+                                      <button className="btn-icon btn-edit">
+                                        <Edit className="w-4 h-4" />
+                                      </button>
+                                      <button
+                                        className="btn-icon btn-delete"
+                                        onClick={() =>
+                                          handleDeleteDomaine(domaine.id)
+                                        }
+                                      >
+                                        <Trash2 className="w-4 h-4" />
+                                      </button>
+                                    </div>
+                                  </td>
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Business Units Tab */}
+                    {activeTab === "business-units" && (
+                      <div className="tab-content">
+                        <div className="form-section">
+                          <h3>Add New Business Unit</h3>
+                          <div className="form-grid">
+                            <div className="form-field">
+                              <label htmlFor="bu-name">BU Name</label>
+                              <input
+                                id="bu-name"
+                                type="text"
+                                value={newBU.name}
+                                onChange={(e) =>
+                                  setNewBU({ ...newBU, name: e.target.value })
+                                }
+                                placeholder="Enter BU name"
+                              />
+                            </div>
+                            <div className="form-field">
+                              <label htmlFor="bu-description">
+                                Description
+                              </label>
+                              <div className="input-with-button">
+                                <input
+                                  id="bu-description"
+                                  type="text"
+                                  value={newBU.description}
+                                  onChange={(e) =>
+                                    setNewBU({
+                                      ...newBU,
+                                      description: e.target.value,
+                                    })
+                                  }
+                                  placeholder="Enter description"
+                                />
+                                <button
+                                  onClick={handleAddBU}
+                                  className="btn-add"
+                                >
+                                  <Plus className="w-4 h-4" />
+                                </button>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="table-container">
+                          <table>
+                            <thead>
+                              <tr>
+                                <th>BU Name</th>
+                                <th>Description</th>
+                                <th>Actions</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {businessUnits.map((bu) => (
+                                <tr key={bu.id}>
+                                  <td>{bu.name}</td>
+                                  <td>{bu.description}</td>
+                                  <td>
+                                    <div className="action-buttons">
+                                      <button className="btn-icon btn-edit">
+                                        <Edit className="w-4 h-4" />
+                                      </button>
+                                      <button
+                                        className="btn-icon btn-delete"
+                                        onClick={() => handleDeleteBU(bu.id)}
+                                      >
+                                        <Trash2 className="w-4 h-4" />
+                                      </button>
+                                    </div>
+                                  </td>
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* User Management Panel */}
+            <div className="expandable-card">
+              <button
+                onClick={() =>
+                  setExpandedPanel(expandedPanel === "users" ? null : "users")
+                }
+                className="expandable-header"
+              >
+                <div className="expandable-title">
+                  <div className="icon-container purple">
+                    <span className="icon">👥</span>
+                  </div>
+                  <div>
+                    <h3>Gestion d'Utilisateur</h3>
+                    <p>
+                      Administration des comptes utilisateurs et permissions
+                    </p>
+                  </div>
+                </div>
+                <div className="expandable-metrics">
+                  <div className="metric-value purple">{users.length}</div>
+                  <p className="metric-label">Utilisateurs actifs</p>
+                  <span className="expand-icon">
+                    {expandedPanel === "users" ? (
+                      <ChevronUp />
+                    ) : (
+                      <ChevronDown />
+                    )}
+                  </span>
+                </div>
+              </button>
+
+              {expandedPanel === "users" && (
+                <div className="expandable-content">
+                  <div className="panel-header-actions">
+                    <button
+                      className="btn-primary"
+                      onClick={() => setIsAddDialogOpen(true)}
+                    >
+                      <Plus className="w-4 h-4 mr-2" />
+                      Ajouter
+                    </button>
+                  </div>
+
+                  {/* Search Bar */}
+                  <div className="search-bar">
+                    <Search className="search-icon" />
+                    <input
+                      type="text"
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      placeholder="Search users..."
+                    />
+                  </div>
+
+                  {/* Users Table */}
+                  <div className="table-container">
+                    <table>
+                      <thead>
+                        <tr>
+                          <th>Username</th>
+                          <th>Full Name</th>
+                          <th>Email</th>
+                          <th>Site</th>
+                          <th>Role</th>
+                          <th>Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {filteredUsers.map((user) => (
+                          <tr key={user.id}>
+                            <td>{user.username}</td>
+                            <td>
+                              {user.firstName} {user.lastName}
+                            </td>
+                            <td>{user.email}</td>
+                            <td>{user.site}</td>
+                            <td>
+                              <span
+                                className={`role-badge ${user.role.toLowerCase().replace(" ", "-")}`}
+                              >
+                                {user.role}
+                              </span>
+                            </td>
+                            <td>
+                              <div className="action-buttons">
+                                <button className="btn-icon btn-edit">
+                                  <Edit className="w-4 h-4" />
+                                </button>
+                                <button
+                                  className="btn-icon btn-delete"
+                                  onClick={() => handleDeleteUser(user.id)}
+                                >
+                                  <Trash2 className="w-4 h-4" />
+                                </button>
+                              </div>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
 

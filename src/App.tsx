@@ -8,7 +8,7 @@ import CarbonFootprintPage from "./Components/CarbonFootprintPage/CarbonFootprin
 import ESGIndicatorsPage from "./Components/ESGIndicatorsPage/ESGIndicatorsPage";
 import ProtectedRoute from "./Components/ProtectedRoute/ProtectedRoute";
 import OrganisationPage from "Components/OrganisationPage/OrganisationPage";
-export type UserRole = "AgentSaisie" | "User" | "SuperUser" | "Admin";
+export type UserRole = "Agent" | "User" | "SuperUser" | "Admin";
 
 export type User = {
   role: UserRole;
@@ -24,7 +24,7 @@ export type User = {
 
 const App = () => {
   const [user] = useState<User>({
-    role: "User",
+    role: "Admin",
     first_name: "Amina",
     last_name: "Alalgui",
     username: "Amina Alalgui",
@@ -72,7 +72,7 @@ const App = () => {
             path="/esg"
             element={
               <ProtectedRoute user={user}>
-                <ESGIndicatorsPage />
+                <ESGIndicatorsPage user={user} />
               </ProtectedRoute>
             }
           />
@@ -80,19 +80,7 @@ const App = () => {
             path="/organisation"
             element={
               <ProtectedRoute user={user}>
-                <OrganisationPage
-                  user={{
-                    role: "AgentSaisie",
-                    first_name: "",
-                    last_name: "",
-                    email: "",
-                    password: "",
-                    username: "",
-                    site: "",
-                    domaine: "",
-                    business_unit: "",
-                  }}
-                />
+                <OrganisationPage user={user} />
               </ProtectedRoute>
             }
           />

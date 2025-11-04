@@ -308,7 +308,7 @@ function DataEntryPage({ user }: { user: User }) {
 
   return (
     <div className="dashboard-wrapper">
-      <Sidebar />
+      <Sidebar user={user} />
       <div className="dashboard-content">
         <Topbar {...topbarProps} />
         <div className="data-entry-page">

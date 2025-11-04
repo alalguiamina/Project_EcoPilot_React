@@ -1,6 +1,7 @@
 import { ReactNode, useState } from "react";
 import "./ESGIndicatorsPage.css";
 import Sidebar from "../Sidebar/Sidebar";
+import { User } from "App";
 
 type EnergyDatum = {
   mois: string;
@@ -49,7 +50,7 @@ const getNumericValue = (datum: ChartDatum, key: string) => {
   return typeof value === "number" ? value : Number(value ?? 0);
 };
 
-function ESGIndicatorsPage() {
+function ESGIndicatorsPage({ user }: { user: User }) {
   const [expandedSection, setExpandedSection] = useState<SectionKey | null>(
     null,
   );
@@ -643,7 +644,7 @@ function ESGIndicatorsPage() {
 
   return (
     <div className="dashboard-wrapper">
-      <Sidebar />
+      <Sidebar user={user} />
       <div className="dashboard-content">
         <div className="esg-indicators-page">
           <div className="page-header">

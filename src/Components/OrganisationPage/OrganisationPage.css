@@ -56,16 +56,20 @@
   overflow-y: auto;
   overflow-x: hidden;
   max-height: 400px; /* Default height for scrolling */
+  min-height: 0; /* Allow card content to shrink */
 }
 
 /* Organization Entities Card - smaller */
 .org-entities-card .card-content {
   max-height: 350px; /* Reduced height for organization entities */
+  /* Removed max-height to allow flex growth */
 }
 
 /* User Management Card - larger */
 .user-management-card .card-content {
   max-height: 500px; /* Increased height for user management */
+  flex: 1; /* Allow this card to grow and fill available space */
+  min-height: 0; /* Required for flex children with overflow */
 }
 
 /* Tabs */
@@ -208,7 +212,7 @@
 
 .table-container th {
   background: #f8fafc;
-  padding: 12px 16px;
+  padding: 20px 16px;
   text-align: left;
   font-size: 14px;
   font-weight: 600;
@@ -217,7 +221,7 @@
 }
 
 .table-container td {
-  padding: 12px 16px;
+  padding: 20px 16px;
   font-size: 14px;
   color: #334155;
   border-bottom: 1px solid #f1f5f9;
@@ -292,8 +296,10 @@
 
 /* Search Bar */
 .search-bar {
+  align-items: start;
   position: relative;
   margin-bottom: 16px;
+  width: 66%;
 }
 
 .search-icon {
@@ -408,7 +414,8 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  align-self: flex-start; /* Adjusted to align at the top within flex container */
+  margin-top: auto;
+  margin-bottom: auto;
   padding: 8px 16px;
   height: 40px;
   min-height: 36px;
