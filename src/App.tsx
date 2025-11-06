@@ -24,7 +24,7 @@ export type User = {
 
 const App = () => {
   const [user] = useState<User>({
-    role: "Admin",
+    role: "Agent",
     first_name: "Amina",
     last_name: "Alalgui",
     username: "Amina Alalgui",
@@ -79,7 +79,7 @@ const App = () => {
           <Route
             path="/organisation"
             element={
-              <ProtectedRoute user={user}>
+              <ProtectedRoute user={user} requiredRole="Admin">
                 <OrganisationPage user={user} />
               </ProtectedRoute>
             }
