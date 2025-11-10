@@ -1,9 +1,9 @@
 import { KeyboardEvent, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./Login.css";
-import emailIcon from "../Assests/email.png";
-import passwordIcon from "../Assests/password.png";
-import logo from "../Assests/logo.png";
+import emailIcon from "../../Assets/email.png";
+import passwordIcon from "../../Assets/password.png";
+import logo from "../../Assets/logo.png";
 
 export const Login = () => {
   const [email, setEmail] = useState("");

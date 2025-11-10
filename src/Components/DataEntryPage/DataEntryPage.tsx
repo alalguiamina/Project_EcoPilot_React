@@ -1,12 +1,12 @@
 import { useState } from "react";
 import "./DataEntryPage.css";
 import Sidebar from "../Sidebar/Sidebar";
-import boltIcon from "../Assests/bolt.png";
-import trashIcon from "../Assests/trash.png";
-import waterIcon from "../Assests/water.png";
-import productionIcon from "../Assests/production.png";
-import socialIcon from "../Assests/social.png";
-import deleteIcon from "../Assests/delete.png";
+import boltIcon from "../../Assets/bolt.png";
+import trashIcon from "../../Assets/trash.png";
+import waterIcon from "../../Assets/water.png";
+import productionIcon from "../../Assets/production.png";
+import socialIcon from "../../Assets/social.png";
+import deleteIcon from "../../Assets/delete.png";
 import YearDataEntry from "Components/YearDataEntry/YearDataEntry";
 import MonthDataEntry from "Components/MonthDataEntry/MonthDataEntry";
 import SiteDataEntry from "Components/SiteDataEntry/SiteDataEntry";

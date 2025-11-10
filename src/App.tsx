@@ -24,7 +24,7 @@ export type User = {
 
 const App = () => {
   const [user] = useState<User>({
-    role: "Agent",
+    role: "Admin",
     first_name: "Amina",
     last_name: "Alalgui",
     username: "Amina Alalgui",

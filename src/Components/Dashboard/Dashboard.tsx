@@ -18,15 +18,15 @@ import {
 
 // ✅ KPI icons
 
-import leafIcon from "../Assests/leaf1.png";
-import chart1Icon from "../Assests/chart1.png";
-import usersIcon from "../Assests/users.png";
-import awardIcon from "../Assests/award.png";
 import KpiCard from "../KpiCard/KpiCard";
 import Sidebar from "Components/Sidebar/Sidebar";
 import { User } from "App";
 import Topbar from "Components/Topbar/Topbar";
 import { usePageTitle } from "hooks/usePageTitle";
+import award from "../../Assets/award.png";
+import leaf from "../../Assets/leaf.png";
+import chart1 from "../../Assets/chart1.png";
+import users from "../../Assets/users.png";
 
 type DashboardProps = { user: User };
 
@@ -86,28 +86,28 @@ const kpiCardsData = [
     label: "Score RSE Global",
     value: "87/100",
     subtitle: "+5 pts ce mois",
-    icon: awardIcon,
+    icon: award,
     color: "green",
   },
   {
     label: "Bilan Carbone",
     value: "950 tCO₂e",
     subtitle: "-8% vs mois dernier",
-    icon: leafIcon,
+    icon: leaf,
     color: "emerald",
   },
   {
     label: "Indicateurs ESG",
     value: "42/50",
     subtitle: "84% de conformité",
-    icon: chart1Icon,
+    icon: chart1,
     color: "blue",
   },
   {
     label: "Collaborateurs formés",
     value: "324",
     subtitle: "Sur 380 employés",
-    icon: usersIcon,
+    icon: users,
     color: "purple",
   },
 ];

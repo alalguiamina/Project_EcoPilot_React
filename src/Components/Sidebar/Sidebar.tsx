@@ -1,14 +1,14 @@
 import { useNavigate, useLocation } from "react-router-dom";
 import "./Sidebar.css";
-import dashboardIcon from "../Assests/dashboardIcon.png";
-import penIcon from "../Assests/pen.png";
-import leafIcon from "../Assests/leaf.png";
-import chartIcon from "../Assests/chart.png";
-import targetIcon from "../Assests/target.png";
-import reportIcon from "../Assests/report.png";
-import settingsIcon from "../Assests/settings.png";
-import organisationIcon from "../Assests/organisation.png";
-import logo from "../Assests/logo.png";
+import dashboardIcon from "../../Assets/dashboard.png";
+import penIcon from "../../Assets/pen.png";
+import leafIcon from "../../Assets/leaf.png";
+import chartIcon from "../../Assets/chart.png";
+import targetIcon from "../../Assets/target.png";
+import reportIcon from "../../Assets/report.png";
+import settingsIcon from "../../Assets/settings.png";
+import organisationIcon from "../../Assets/organisation.png";
+import logo from "../../Assets/logo.png";
 import { User } from "App";
 
 interface SidebarProps {
