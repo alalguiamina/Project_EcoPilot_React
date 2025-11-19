@@ -18,8 +18,6 @@ export type User = {
   password: string;
   username: string;
   site: string;
-  domaine: string;
-  business_unit: string;
 };
 
 const App = () => {
@@ -31,8 +29,6 @@ const App = () => {
     email: "amina@example.com",
     password: "1234",
     site: "Settat - Ferme Doukkala",
-    domaine: "AgroMaroc domaine SA",
-    business_unit: "Production agricole",
   });
 
   return (

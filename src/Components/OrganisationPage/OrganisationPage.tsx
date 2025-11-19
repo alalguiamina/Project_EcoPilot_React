@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./OrganisationPage.css";
-import { Building2, MapPin, Users, X } from "lucide-react";
+import { Building2, MapPin, Plus, Users, X } from "lucide-react";
 import { User } from "App";
 import Sidebar from "Components/Sidebar/Sidebar";
 import Topbar from "Components/Topbar/Topbar";
@@ -10,13 +10,11 @@ import { EntityManager } from "Components/EntityManager";
 import { UserManager } from "Components/UserManager";
 import { ExpandablePanel } from "Components/ExpandablePanel";
 import { AddUserDialog } from "Components/AddUserDialog";
-import {
-  Site,
-  Domaine,
-  BusinessUnit,
-  UserData,
-  NewUser,
-} from "types/organisation";
+import { createEntityFormatter } from "Utils/formatter";
+
+import { Site, UserData, SiteGroup, NewUser } from "types/organisation";
+import AddSiteGroupDialog from "Components/AddSiteGroupDialog";
+import EditUserDialog from "Components/EditUserDialog";
 
 interface OrganisationPageProps {
   user: User;
@@ -64,21 +62,17 @@ const OrganisationPage = ({ user }: OrganisationPageProps) => {
     surface: "",
   });
 
-  // Domaines state
-  const [domaines, setDomaines] = useState<Domaine[]>([
-    { id: 1, name: "Agrumes", type: "Production" },
-    { id: 2, name: "Olives", type: "Production" },
-    { id: 3, name: "Légumes", type: "Production" },
-  ]);
-  const [newDomaine, setNewDomaine] = useState({ name: "", type: "" });
+  const [siteGroups, setSiteGroups] = useState<SiteGroup[]>([]);
 
-  // Business Units state
-  const [businessUnits, setBusinessUnits] = useState<BusinessUnit[]>([
-    { id: 1, name: "BU Nord", description: "Business Unit région Nord" },
-    { id: 2, name: "BU Centre", description: "Business Unit région Centre" },
-    { id: 3, name: "BU Sud", description: "Business Unit région Sud" },
-  ]);
-  const [newBU, setNewBU] = useState({ name: "", description: "" });
+  const [newGroup, setNewGroup] = useState<SiteGroup>({
+    name: "",
+    description: "",
+    type: "Interne",
+    siteId: 0,
+    members: [],
+  });
+
+  const [isAddGroupOpen, setIsAddGroupOpen] = useState(false);
 
   // Users state
   const [users, setUsers] = useState<UserData[]>([
@@ -89,8 +83,6 @@ const OrganisationPage = ({ user }: OrganisationPageProps) => {
       lastName: "Dupont",
       email: "j.dupont@lda.ma",
       site: "Site Berkane",
-      domaine: "Agrumes",
-      businessUnit: "BU Nord",
       role: "Admin",
     },
     {
@@ -100,9 +92,7 @@ const OrganisationPage = ({ user }: OrganisationPageProps) => {
       lastName: "Martin",
       email: "m.martin@lda.ma",
       site: "Site Meknès",
-      domaine: "Olives",
-      businessUnit: "BU Centre",
-      role: "User",
+      role: "Super User",
     },
     {
       id: 3,
@@ -111,8 +101,69 @@ const OrganisationPage = ({ user }: OrganisationPageProps) => {
       lastName: "Chami",
       email: "a.chami@lda.ma",
       site: "Site Agadir",
-      domaine: "Légumes",
-      businessUnit: "BU Sud",
+      role: "Super User",
+    },
+    {
+      id: 4,
+      username: "sbennani",
+      firstName: "Samira",
+      lastName: "Bennani",
+      email: "s.bennani@lda.ma",
+      site: "Site Berkane",
+      role: "User",
+    },
+    {
+      id: 5,
+      username: "krahmani",
+      firstName: "Karim",
+      lastName: "Rahmani",
+      email: "k.rahmani@lda.ma",
+      site: "Site Meknès",
+      role: "User",
+    },
+    {
+      id: 6,
+      username: "fzaidi",
+      firstName: "Fatima",
+      lastName: "Zaidi",
+      email: "f.zaidi@lda.ma",
+      site: "Site Agadir",
+      role: "User",
+    },
+    {
+      id: 7,
+      username: "hbenali",
+      firstName: "Hassan",
+      lastName: "Benali",
+      email: "h.benali@lda.ma",
+      site: "Site Meknès",
+      role: "Agent de saisie",
+    },
+    {
+      id: 8,
+      username: "lchoukri",
+      firstName: "Laila",
+      lastName: "Choukri",
+      email: "l.choukri@lda.ma",
+      site: "Site Berkane",
+      role: "Agent de saisie",
+    },
+    {
+      id: 9,
+      username: "yhamdi",
+      firstName: "Youssef",
+      lastName: "Hamdi",
+      email: "y.hamdi@lda.ma",
+      site: "Site Agadir",
+      role: "Agent de saisie",
+    },
+    {
+      id: 10,
+      username: "sbelkadi",
+      firstName: "Sara",
+      lastName: "Belkadi",
+      email: "s.belkadi@lda.ma",
+      site: "Site Meknès",
       role: "Agent de saisie",
     },
   ]);
@@ -123,15 +174,15 @@ const OrganisationPage = ({ user }: OrganisationPageProps) => {
     email: "",
     password: "",
     site: "",
-    domaine: "",
-    businessUnit: "",
     role: "User",
   });
+
   const [searchQuery, setSearchQuery] = useState("");
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
 
+  const [userBeingEdited, setUserBeingEdited] = useState<UserData | null>(null);
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   // Tabs state
-  const [activeTab, setActiveTab] = useState("sites");
 
   // Filter users based on search
   const filteredUsers = users.filter(
@@ -154,52 +205,54 @@ const OrganisationPage = ({ user }: OrganisationPageProps) => {
     setSites(sites.filter((site) => site.id !== id));
   };
 
-  // Add/Edit Domaine handlers
-  const handleAddDomaine = () => {
-    if (newDomaine.name && newDomaine.type) {
-      setDomaines([...domaines, { ...newDomaine, id: Date.now() }]);
-      setNewDomaine({ name: "", type: "" });
-    }
-  };
+  const handleAddGroup = () => {
+    if (!newGroup.name || !newGroup.siteId) return;
 
-  const handleDeleteDomaine = (id: number) => {
-    setDomaines(domaines.filter((domaine) => domaine.id !== id));
-  };
+    setSiteGroups([...siteGroups, { ...newGroup, id: Date.now() }]);
 
-  // Add/Edit Business Unit handlers
-  const handleAddBU = () => {
-    if (newBU.name && newBU.description) {
-      setBusinessUnits([...businessUnits, { ...newBU, id: Date.now() }]);
-      setNewBU({ name: "", description: "" });
-    }
-  };
+    setNewGroup({
+      name: "",
+      description: "",
+      type: "Interne",
+      siteId: "",
+      members: [],
+    });
 
-  const handleDeleteBU = (id: number) => {
-    setBusinessUnits(businessUnits.filter((bu) => bu.id !== id));
+    setIsAddGroupOpen(false);
   };
-
+  const formatSiteGroupField = createEntityFormatter(sites, users);
+  const handleEditUser = (user: UserData) => {
+    setUserBeingEdited({ ...user });
+    setIsEditDialogOpen(true);
+  };
   // Add/Edit User handlers
-  const handleAddUser = () => {
-    if (
-      newUser.username &&
-      newUser.email &&
-      newUser.firstName &&
-      newUser.lastName
-    ) {
+  const handleSaveUser = () => {
+    if (userBeingEdited) {
+      // === EDIT MODE ===
+      setUsers(
+        users.map((u) =>
+          u.id === userBeingEdited.id ? { ...newUser, id: u.id } : u,
+        ),
+      );
+    } else {
+      // === ADD MODE ===
       setUsers([...users, { ...newUser, id: Date.now() }]);
-      setNewUser({
-        username: "",
-        firstName: "",
-        lastName: "",
-        email: "",
-        password: "",
-        site: "",
-        domaine: "",
-        businessUnit: "",
-        role: "User",
-      });
-      setIsAddDialogOpen(false);
     }
+
+    // Reset
+    setNewUser({
+      username: "",
+      firstName: "",
+      lastName: "",
+      email: "",
+      password: "",
+      site: "",
+      role: "User",
+    });
+
+    setUserBeingEdited(null);
+    setIsAddDialogOpen(false);
+    setIsEditDialogOpen(false);
   };
 
   const handleDeleteUser = (id: number) => {
@@ -217,53 +270,72 @@ const OrganisationPage = ({ user }: OrganisationPageProps) => {
   };
   const entityConfigs = [
     {
-      id: "sites",
-      title: "Site",
-      type: "sites",
+      id: "site-groups",
+      title: "Groupes de Site",
       fields: [
-        { key: "name", label: "Site Name", placeholder: "Enter site name" },
-        { key: "location", label: "Location", placeholder: "Enter location" },
-        { key: "surface", label: "Surface", placeholder: "Enter surface" },
-      ],
-      items: sites,
-      newItem: newSite,
-      setNewItem: setNewSite,
-      onAdd: handleAddSite,
-      onDelete: handleDeleteSite,
-    },
-    {
-      id: "domaines",
-      title: "Domain",
-      type: "domaines",
-      fields: [
-        { key: "name", label: "Domain Name", placeholder: "Enter domain name" },
-        { key: "type", label: "Type", placeholder: "Enter type" },
-      ],
-      items: domaines,
-      newItem: newDomaine,
-      setNewItem: setNewDomaine,
-      onAdd: handleAddDomaine,
-      onDelete: handleDeleteDomaine,
-    },
-    {
-      id: "business-units",
-      title: "Business Unit",
-      type: "business-units",
-      fields: [
-        { key: "name", label: "BU Name", placeholder: "Enter BU name" },
+        { key: "name", label: "Nom de l'unité", placeholder: "Entrer le nom" },
         {
           key: "description",
           label: "Description",
-          placeholder: "Enter description",
+          placeholder: "Entrer la description",
         },
+        { key: "type", label: "Type", placeholder: "Interne / Externe" },
+        { key: "siteId", label: "Site", placeholder: "ID du site" },
+        { key: "members", label: "Membres", placeholder: "Liste des membres" },
       ],
-      items: businessUnits,
-      newItem: newBU,
-      setNewItem: setNewBU,
-      onAdd: handleAddBU,
-      onDelete: handleDeleteBU,
+      items: siteGroups,
+      newItem: newGroup,
+      setNewItem: setNewGroup as any,
+      onAdd: handleAddGroup,
+      onDelete: (id: number) =>
+        setSiteGroups(siteGroups.filter((g) => g.id !== id)),
     },
   ];
+  const emptyUser: NewUser = {
+    id: 0,
+    username: "",
+    firstName: "",
+    lastName: "",
+    email: "",
+    password: "",
+    site: "",
+    role: "User",
+  };
+
+  // Generic formatter builder for EntityManager
+  function createFormatField({
+    sites,
+    users,
+  }: {
+    sites?: Site[];
+    users?: UserData[];
+  }) {
+    return (key: string, value: any) => {
+      // Convert siteId → site.name
+      if (key === "siteId" && sites) {
+        const site = sites.find((s) => s.id === value);
+        return site ? site.name : "—";
+      }
+
+      // Convert userId → user.role
+      if (key === "userId" && users) {
+        const user = users.find((u) => u.id === value);
+        return user ? user.role : "—";
+      }
+
+      // Convert members[] → roles (comma-separated)
+      if (key === "members" && users && Array.isArray(value)) {
+        return value
+          .map((id) => {
+            const u = users.find((user) => user.id === id);
+            return u ? u.role : "—";
+          })
+          .join(", ");
+      }
+
+      return String(value);
+    };
+  }
 
   return (
     <div className="dashboard-wrapper">
@@ -274,7 +346,7 @@ const OrganisationPage = ({ user }: OrganisationPageProps) => {
         <main className="main-dashboard">
           <div className="organisation-page">
             <div className="page-header">
-              <p>Gestion des entités organisationnelles et des utilisateurs</p>
+              <p>Gestion des unités organisationnelles et des utilisateurs</p>
             </div>
 
             {/* Score cards */}
@@ -290,24 +362,6 @@ const OrganisationPage = ({ user }: OrganisationPageProps) => {
 
               <div className="score-card">
                 <div className="score-card-header">
-                  <span className="score-label">Domaines</span>
-                  <span className="score-icon">🏭</span>
-                </div>
-                <div className="score-value green">{domaines.length}</div>
-                <p className="score-change">En production</p>
-              </div>
-
-              <div className="score-card">
-                <div className="score-card-header">
-                  <span className="score-label">Business Units</span>
-                  <span className="score-icon">👥</span>
-                </div>
-                <div className="score-value purple">{businessUnits.length}</div>
-                <p className="score-change">Opérationnelles</p>
-              </div>
-
-              <div className="score-card">
-                <div className="score-card-header">
                   <span className="score-label">Utilisateurs</span>
                   <span className="score-icon">👤</span>
                 </div>
@@ -315,62 +369,6 @@ const OrganisationPage = ({ user }: OrganisationPageProps) => {
                 <p className="score-change">Actifs</p>
               </div>
             </div>*/}
-
-            {/* Organisation Panel */}
-            <ExpandablePanel
-              id="org"
-              title="Entités"
-              description="Gestion des sites, domaines et unités commerciales"
-              icon={<span className="icon">🏢</span>}
-              color="blue"
-              metricValue={
-                sites.length + domaines.length + businessUnits.length
-              }
-              metricLabel="Entités totales"
-              expandedPanel={expandedPanel as string | null}
-              setExpandedPanel={
-                setExpandedPanel as (panel: string | null) => void
-              }
-            >
-              <div className="tabs-container">
-                <div className="tabs-list">
-                  {entityConfigs.map(({ id, title }) => (
-                    <button
-                      key={id}
-                      className={`tab-button ${activeTab === id ? "active" : ""}`}
-                      onClick={() => setActiveTab(id)}
-                    >
-                      {title}
-                    </button>
-                  ))}
-                </div>
-
-                {entityConfigs.map(
-                  ({
-                    id,
-                    title,
-                    fields,
-                    items,
-                    newItem,
-                    setNewItem,
-                    onAdd,
-                    onDelete,
-                  }) =>
-                    activeTab === id && (
-                      <EntityManager
-                        key={id}
-                        title={title}
-                        fields={fields}
-                        items={items}
-                        newItem={newItem as any}
-                        setNewItem={setNewItem as (item: any) => void}
-                        onAdd={onAdd}
-                        onDelete={onDelete}
-                      />
-                    ),
-                )}
-              </div>{" "}
-            </ExpandablePanel>
 
             {/* User Management Panel */}
             <ExpandablePanel
@@ -386,28 +384,128 @@ const OrganisationPage = ({ user }: OrganisationPageProps) => {
                 setExpandedPanel as (panel: string | null) => void
               }
             >
-              {/* User management table and search */}
               <UserManager
                 users={users}
                 searchQuery={searchQuery}
                 onSearch={setSearchQuery}
-                onAdd={() => setIsAddDialogOpen(true)}
+                onAdd={() => {
+                  // OPEN ADD DIALOG
+                  setNewUser({
+                    username: "",
+                    firstName: "",
+                    lastName: "",
+                    email: "",
+                    password: "",
+                    site: "",
+                    role: "User",
+                  });
+                  setIsAddDialogOpen(true);
+                  setUserBeingEdited(null);
+                }}
+                onEdit={(user) => {
+                  // OPEN EDIT DIALOG
+                  setUserBeingEdited({ ...user });
+                  setIsEditDialogOpen(true);
+                  setIsAddDialogOpen(false);
+                }}
                 onDelete={handleDeleteUser}
               />
 
-              {/* Add User Dialog  */}
+              {/* ADD USER DIALOG */}
               {isAddDialogOpen && (
                 <AddUserDialog
                   isOpen={isAddDialogOpen}
                   newUser={newUser}
                   setNewUser={setNewUser}
                   sites={sites}
-                  domaines={domaines}
-                  businessUnits={businessUnits}
-                  onAddUser={handleAddUser}
+                  onSave={() => {
+                    setUsers([...users, { ...newUser, id: Date.now() }]);
+                    setIsAddDialogOpen(false);
+                  }}
                   onClose={() => setIsAddDialogOpen(false)}
                 />
               )}
+
+              {/* EDIT USER DIALOG */}
+              {isEditDialogOpen && userBeingEdited && (
+                <EditUserDialog
+                  isOpen={isEditDialogOpen}
+                  user={userBeingEdited}
+                  setUser={(updated) => setUserBeingEdited(updated)}
+                  sites={sites}
+                  onSave={() => {
+                    setUsers(
+                      users.map((u) =>
+                        u.id === userBeingEdited.id ? userBeingEdited : u,
+                      ),
+                    );
+                    setIsEditDialogOpen(false);
+                    setUserBeingEdited(null);
+                  }}
+                  onClose={() => {
+                    setIsEditDialogOpen(false);
+                    setUserBeingEdited(null);
+                  }}
+                />
+              )}
+            </ExpandablePanel>
+
+            {/* Organisation Panel */}
+            <ExpandablePanel
+              id="org"
+              title="Unités"
+              description="Gestion des sites"
+              icon={<span className="icon">🏢</span>}
+              color="blue"
+              metricValue={sites.length}
+              metricLabel="Unités totales"
+              expandedPanel={expandedPanel as string | null}
+              setExpandedPanel={
+                setExpandedPanel as (panel: string | null) => void
+              }
+            >
+              <div className="single-panel">
+                {(() => {
+                  const cfg = entityConfigs.find(
+                    (c) => c.id === "site-groups",
+                  )!;
+
+                  return (
+                    <>
+                      <EntityManager
+                        title={cfg.title}
+                        fields={cfg.fields}
+                        items={cfg.items}
+                        newItem={cfg.newItem as any}
+                        setNewItem={cfg.setNewItem as (item: any) => void}
+                        onAdd={cfg.onAdd}
+                        onDelete={cfg.onDelete}
+                        extraActionButton={
+                          <button
+                            className="btn-primary"
+                            onClick={() => setIsAddGroupOpen(true)}
+                          >
+                            <Plus className="w-4 h-4 mr-2" /> Ajouter
+                          </button>
+                        }
+                        formatField={formatSiteGroupField}
+                      />
+
+                      {isAddGroupOpen && (
+                        <AddSiteGroupDialog
+                          isOpen={isAddGroupOpen}
+                          newGroup={newGroup}
+                          setNewGroup={setNewGroup}
+                          sites={sites}
+                          people={users}
+                          onAddGroup={handleAddGroup}
+                          onClose={() => setIsAddGroupOpen(false)}
+                        />
+                      )}
+                    </>
+                  );
+                })()}
+              </div>
             </ExpandablePanel>
           </div>
         </main>

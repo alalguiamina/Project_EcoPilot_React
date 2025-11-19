@@ -17,6 +17,7 @@ interface UserManagerProps {
   onSearch: (value: string) => void;
   onAdd: () => void;
   onDelete: (id: number) => void;
+  onEdit: (user: User) => void;
 }
 
 export function UserManager({
@@ -25,6 +26,7 @@ export function UserManager({
   onSearch,
   onAdd,
   onDelete,
+  onEdit,
 }: UserManagerProps) {
   const filteredUsers = useMemo(
     () =>
@@ -89,7 +91,10 @@ export function UserManager({
                 </td>
                 <td>
                   <div className="action-buttons">
-                    <button className="btn-icon btn-edit">
+                    <button
+                      className="btn-icon btn-edit"
+                      onClick={() => onEdit(user)}
+                    >
                       <Edit className="w-4 h-4" />
                     </button>
                     <button

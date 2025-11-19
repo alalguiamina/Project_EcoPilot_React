@@ -1,10 +1,18 @@
 // src/types/organisation.ts
 
 export interface Site {
-  id?: number;
+  id: number;
   name: string;
   location: string;
   surface: string;
+}
+export interface SiteGroup {
+  id?: number;
+  name: string;
+  description: string;
+  type: "Interne" | "Externe";
+  siteId: number | "";
+  members: number[];
 }
 
 export interface Domaine {
@@ -26,19 +34,16 @@ export interface UserData {
   lastName: string;
   email: string;
   site: string;
-  domaine: string;
-  businessUnit: string;
+
   role: string;
 }
-
 export interface NewUser {
+  id?: number;
   username: string;
   firstName: string;
   lastName: string;
   email: string;
   password: string;
   site: string;
-  domaine: string;
-  businessUnit: string;
   role: string;
 }

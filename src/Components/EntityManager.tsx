@@ -1,5 +1,6 @@
 // Components/EntityManager.tsx
 import { Plus, Edit, Trash2 } from "lucide-react";
+import { UserData } from "types/organisation";
 
 interface FieldConfig<T> {
   key: keyof T;
@@ -13,51 +14,54 @@ interface EntityManagerProps<T> {
   fields: FieldConfig<T>[];
   items: T[];
   newItem: T;
+
   setNewItem: (item: T) => void;
   onAdd: () => void;
   onDelete: (id: number) => void;
+  extraActionButton?: React.ReactNode;
+  formatField?: (key: keyof T, value: any) => string;
 }
 
 export function EntityManager<T extends { id?: number }>({
   title,
+
   fields,
   items,
   newItem,
   setNewItem,
   onAdd,
   onDelete,
+  extraActionButton,
+  formatField,
 }: EntityManagerProps<T>) {
   return (
     <div className="tab-content">
-      <div className="form-section">
-        <h3></h3>
-        <div className="form-grid">
-          {fields.map((field, idx) => (
-            <div key={idx} className="form-field">
-              <label htmlFor={`${title}-${String(field.key)}`}>
-                {field.label}
-              </label>
-              <div
-                className={idx === fields.length - 1 ? "input-with-button" : ""}
-              >
-                <input
-                  id={`${title}-${String(field.key)}`}
-                  type={field.type || "text"}
-                  value={String(newItem[field.key] ?? "")}
-                  onChange={(e) =>
-                    setNewItem({ ...newItem, [field.key]: e.target.value })
-                  }
-                  placeholder={field.placeholder}
-                />
-                {idx === fields.length - 1 && (
-                  <button onClick={onAdd} className="btn-add">
-                    <Plus className="w-4 h-4" />
-                    Ajouter
-                  </button>
-                )}
-              </div>
-            </div>
-          ))}
+      <div className="panel-header-row">
+        <div className="toolbar">
+          <div className="search-bar">
+            <svg
+              className="search-icon"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <circle cx="11" cy="11" r="8" />
+              <line x1="21" y1="21" x2="16.65" y2="16.65" />
+            </svg>
+
+            <input
+              type="text"
+              placeholder="Rechercher..."
+              onChange={(e) => console.log("search something", e.target.value)}
+            />
+          </div>
+
+          {extraActionButton && (
+            <button className="btn-primary">{extraActionButton}</button>
+          )}
         </div>
       </div>
 
@@ -75,7 +79,13 @@ export function EntityManager<T extends { id?: number }>({
             {items.map((item) => (
               <tr key={item.id}>
                 {fields.map((f, idx) => (
-                  <td key={idx}>{String(item[f.key])}</td>
+                  <td key={idx}>
+                    {formatField
+                      ? formatField(f.key, item[f.key])
+                      : Array.isArray(item[f.key])
+                        ? (item[f.key] as any[]).join(", ")
+                        : String(item[f.key])}
+                  </td>
                 ))}
                 <td>
                   <div className="action-buttons">

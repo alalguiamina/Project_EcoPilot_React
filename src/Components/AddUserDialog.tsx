@@ -1,29 +1,28 @@
 import { X } from "lucide-react";
 
-import { Site, Domaine, BusinessUnit, NewUser } from "types/organisation";
+import { Site, NewUser, UserData } from "types/organisation";
 
 interface AddUserDialogProps {
   isOpen: boolean;
-  newUser: NewUser;
+  newUser: NewUser; // ONLY NewUser
+  setNewUser: React.Dispatch<React.SetStateAction<NewUser>>;
   sites: Site[];
-  domaines: Domaine[];
-  businessUnits: BusinessUnit[];
-  setNewUser: (u: NewUser) => void;
-  onAddUser: () => void;
+  onSave: () => void;
   onClose: () => void;
 }
-
 export function AddUserDialog({
   isOpen,
   newUser,
   setNewUser,
   sites,
-  domaines,
-  businessUnits,
-  onAddUser,
+  onSave,
   onClose,
 }: AddUserDialogProps) {
   if (!isOpen) return null;
+
+  function onAddUser(): void {
+    // This function is not used, the onSave prop is used instead.
+  }
 
   return (
     <div className="dialog-overlay">
@@ -36,8 +35,6 @@ export function AddUserDialog({
         </div>
 
         <div className="dialog-content">
-          <p className="dialog-description">Fill in the user details below</p>
-
           <div className="form-grid-2">
             <div className="form-field">
               <label htmlFor="username">Username</label>
@@ -123,42 +120,6 @@ export function AddUserDialog({
             </div>
 
             <div className="form-field">
-              <label htmlFor="user-domaine">Domain</label>
-              <select
-                id="user-domaine"
-                value={newUser.domaine}
-                onChange={(e) =>
-                  setNewUser({ ...newUser, domaine: e.target.value })
-                }
-              >
-                <option value="">Select domain</option>
-                {domaines.map((domaine) => (
-                  <option key={domaine.id} value={domaine.name}>
-                    {domaine.name}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <div className="form-field">
-              <label htmlFor="user-bu">Business Unit</label>
-              <select
-                id="user-bu"
-                value={newUser.businessUnit}
-                onChange={(e) =>
-                  setNewUser({ ...newUser, businessUnit: e.target.value })
-                }
-              >
-                <option value="">Select business unit</option>
-                {businessUnits.map((bu) => (
-                  <option key={bu.id} value={bu.name}>
-                    {bu.name}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <div className="form-field">
               <label htmlFor="user-role">Role</label>
               <select
                 id="user-role"
@@ -180,7 +141,7 @@ export function AddUserDialog({
           <button className="btn-secondary" onClick={onClose}>
             Cancel
           </button>
-          <button onClick={onAddUser} className="btn-primary">
+          <button onClick={onSave} className="btn-primary">
             Add User
           </button>
         </div>
