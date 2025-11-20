@@ -20,10 +20,10 @@ type MenuItem = {
   label: string;
   icon: string;
   color: string;
-  path: string;
+  path?: string; // now optional
+  children?: MenuItem[]; // add sub-items
   adminOnly?: boolean;
 };
-
 const Sidebar = ({ user }: SidebarProps) => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -36,12 +36,30 @@ const Sidebar = ({ user }: SidebarProps) => {
       color: "#3b82f6",
       path: "/dashboard",
     },
+    // Parent "Saisie de données"
     {
       id: "data-entry",
       label: "Saisie de données",
       icon: penIcon,
       color: "#16a34a",
-      path: "/data-entry",
+
+      // SUB-PAGES
+      children: [
+        {
+          id: "canevas",
+          label: "Canevas de Saisie",
+          icon: penIcon,
+          color: "#16a34a",
+          path: "/data-entry/canevas",
+        },
+        {
+          id: "validation",
+          label: "Validation de Données",
+          icon: penIcon,
+          color: "#555",
+          path: "/data-entry/validation",
+        },
+      ],
     },
     {
       id: "carbon",
@@ -104,32 +122,36 @@ const Sidebar = ({ user }: SidebarProps) => {
 
       <nav className="sidebar-nav">
         {filteredMenuItems.map((item) => (
-          <button
-            key={item.id}
-            onClick={() => navigate(item.path)}
-            className={`sidebar-item ${isActive(item.path) ? "active" : ""}`}
-            style={
-              isActive(item.path)
-                ? {
-                    backgroundColor: `${item.color}15`,
-                    color: item.color,
-                  }
-                : {}
-            }
-          >
-            <img
-              src={item.icon}
-              alt={item.label}
-              className="sidebar-icon"
-              style={{
-                width: "24px",
-                height: "24px",
-                objectFit: "contain",
-                marginRight: "8px",
+          <div key={item.id}>
+            {/* Parent button */}
+            <button
+              className="sidebar-item"
+              onClick={() => {
+                if (item.path) navigate(item.path);
+                // If it has children, toggle expand/collapse
               }}
-            />
-            <span className="sidebar-label">{item.label}</span>
-          </button>
+            >
+              <img src={item.icon} className="sidebar-icon" />
+              <span>{item.label}</span>
+            </button>
+
+            {/* Sub-items */}
+            {item.children && (
+              <div className="sidebar-submenu">
+                {item.children.map((child) => (
+                  <button
+                    key={child.id}
+                    onClick={() => navigate(child.path!)}
+                    className={`sidebar-item sub ${
+                      isActive(child.path!) ? "active" : ""
+                    }`}
+                  >
+                    <span className="sidebar-label">{child.label}</span>
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
         ))}
       </nav>
     </aside>

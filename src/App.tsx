@@ -1,5 +1,10 @@
 import { useState } from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+} from "react-router-dom";
 import "./App.css";
 import { Login } from "./Components/Login/Login";
 import Dashboard from "./Components/Dashboard/Dashboard";
@@ -8,6 +13,8 @@ import CarbonFootprintPage from "./Components/CarbonFootprintPage/CarbonFootprin
 import ESGIndicatorsPage from "./Components/ESGIndicatorsPage/ESGIndicatorsPage";
 import ProtectedRoute from "./Components/ProtectedRoute/ProtectedRoute";
 import OrganisationPage from "Components/OrganisationPage/OrganisationPage";
+import { CanevasPage } from "Components/DataEntryPage/CanevasPage";
+import { ValidationPage } from "Components/DataEntryPage/ValidationPage";
 export type UserRole = "Agent" | "User" | "SuperUser" | "Admin";
 
 export type User = {
@@ -49,12 +56,27 @@ const App = () => {
             }
           />
           <Route
-            path="/data-entry"
+            path="/data-entry/canevas"
             element={
               <ProtectedRoute user={user}>
-                <DataEntryPage user={user} />
+                <CanevasPage user={user} />
               </ProtectedRoute>
             }
+          />
+
+          <Route
+            path="/data-entry/validation"
+            element={
+              <ProtectedRoute user={user}>
+                <ValidationPage user={user} />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* Redirect /data-entry → /data-entry/canevas */}
+          <Route
+            path="/data-entry"
+            element={<Navigate to="/data-entry/canevas" replace />}
           />
           <Route
             path="/carbon"
