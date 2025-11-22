@@ -1,18 +1,18 @@
 export interface FetchOptions {
-  method?: "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
+  method?: string;
   headers?: Record<string, string>;
-  body?: unknown;
+  body?: any;
+  credentials?: RequestCredentials;
 }
 
 export interface ApiResponse<T> {
   data?: T;
-  error?: unknown;
+  error?: any;
   status: number;
 }
 
 // Get the base URL from environment or use a default
-const API_BASE_URL =
-  process.env.REACT_APP_API_BASE_URL || "http://localhost:8000";
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || "";
 
 /**
  * Custom fetch client for API calls
@@ -22,63 +22,82 @@ export async function fetchClient<T>(
   endpoint: string,
   options: FetchOptions = {},
 ): Promise<ApiResponse<T>> {
-  const { method = "GET", headers = {}, body } = options;
-
-  const config: RequestInit = {
-    method,
-    headers: {
-      "Content-Type": "application/json",
-      ...headers,
-    },
+  const token =
+    localStorage.getItem("authToken") || localStorage.getItem("ACCESS_TOKEN");
+  const headers: Record<string, string> = {
+    Accept: "application/json",
+    ...(options.headers || {}),
   };
 
-  // Add authentication token if available
-  const token = localStorage.getItem("authToken");
-  if (token) {
-    config.headers = {
-      ...config.headers,
-      Authorization: `Bearer ${token}`,
-    };
+  let body: any = undefined;
+  if (options.body !== undefined && options.body !== null) {
+    // If caller passes FormData, do not set Content-Type and do not stringify
+    if (options.body instanceof FormData) {
+      body = options.body;
+    } else {
+      headers["Content-Type"] = "application/json";
+      body = JSON.stringify(options.body);
+    }
   }
 
-  // Add body for non-GET requests
-  if (body && method !== "GET") {
-    config.body = JSON.stringify(body);
-  }
+  if (token) headers["Authorization"] = `Bearer ${token}`;
+
+  const API_BASE_URL = (process.env.REACT_APP_API_BASE_URL || "").replace(
+    /\/$/,
+    "",
+  );
+  const fullUrl = `${API_BASE_URL}${endpoint.startsWith("/") ? endpoint : "/" + endpoint}`;
+
+  // DEBUG: show final URL and body
+  console.debug(
+    "[fetchClient] Request ->",
+    options.method ?? "GET",
+    fullUrl,
+    "body=",
+    options.body,
+  );
 
   try {
-    const response = await fetch(`${API_BASE_URL}${endpoint}`, config);
+    const resp = await fetch(fullUrl, {
+      method: options.method ?? "GET",
+      headers,
+      mode: "cors", // allow cross-origin; backend must enable CORS
+      cache: "no-cache",
+      body,
+      credentials: options.credentials,
+    });
 
-    let data: T | undefined;
-    let error: unknown;
-
-    // Try to parse JSON response
+    let parsed: any = undefined;
     try {
-      const responseData = await response.json();
-      if (response.ok) {
-        data = responseData;
-      } else {
-        error = responseData;
-      }
-    } catch {
-      // If JSON parsing fails, use text content or create generic error
-      if (!response.ok) {
-        error = {
-          detail: response.statusText || "An error occurred",
-        };
-      }
+      parsed = await resp.json();
+    } catch (e) {
+      // no json body
+      parsed = undefined;
     }
 
+    if (!resp.ok) {
+      console.warn(
+        "[fetchClient] non-ok response:",
+        resp.status,
+        resp.statusText,
+        parsed,
+      );
+      return {
+        error: parsed ?? { statusText: resp.statusText, status: resp.status },
+        status: resp.status,
+      };
+    }
+
+    console.debug("[fetchClient] Response OK:", resp.status, parsed);
     return {
-      data,
-      error,
-      status: response.status,
+      data: parsed as T,
+      status: resp.status,
     };
   } catch (networkError) {
+    // More explicit error logging to help debug CORS/network problems
+    console.error("[fetchClient] Network error ->", networkError);
     return {
-      error: {
-        detail: "Network error: Unable to reach the server",
-      },
+      error: { message: "Network error", detail: String(networkError) },
       status: 0,
     };
   }

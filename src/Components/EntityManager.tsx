@@ -1,6 +1,6 @@
 // Components/EntityManager.tsx
 import { Plus, Edit, Trash2 } from "lucide-react";
-import { UserData } from "types/organisation";
+import { UserData } from "../types/organisation";
 
 interface FieldConfig<T> {
   key: keyof T;
@@ -14,7 +14,6 @@ interface EntityManagerProps<T> {
   fields: FieldConfig<T>[];
   items: T[];
   newItem: T;
-
   setNewItem: (item: T) => void;
   onAdd: () => void;
   onDelete: (id: number) => void;
@@ -24,7 +23,6 @@ interface EntityManagerProps<T> {
 
 export function EntityManager<T extends { id?: number }>({
   title,
-
   fields,
   items,
   newItem,
@@ -59,9 +57,7 @@ export function EntityManager<T extends { id?: number }>({
             />
           </div>
 
-          {extraActionButton && (
-            <button className="btn-primary">{extraActionButton}</button>
-          )}
+          {extraActionButton && <div>{extraActionButton}</div>}
         </div>
       </div>
 
@@ -94,7 +90,7 @@ export function EntityManager<T extends { id?: number }>({
                     </button>
                     <button
                       className="btn-icon btn-delete"
-                      onClick={() => onDelete(item.id!)}
+                      onClick={() => item.id && onDelete(item.id)}
                     >
                       <Trash2 className="w-4 h-4" />
                     </button>

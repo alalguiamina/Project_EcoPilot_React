@@ -1,30 +1,32 @@
-export type UserRole = "admin" | "agent" | "user";
+export type UserRole = "admin" | "agent" | "user" | "super_user";
 
 export interface User {
   id: number;
   username: string;
-  role: UserRole;
+  role: string;
   sites: number[];
+  email?: string;
+  first_name?: string;
+  last_name?: string;
 }
 
 export interface CreateUserRequest {
   username: string;
   password: string;
-  role: UserRole;
+  role: string;
   sites: number[];
 }
 
 export interface UpdateUserRequest {
   username: string;
-  role: UserRole;
+  role: string;
   sites: number[];
+  email?: string;
+  first_name?: string;
+  last_name?: string;
 }
 
-export interface PartialUpdateUserRequest {
-  username?: string;
-  role?: UserRole;
-  sites?: number[];
-}
+export type PartialUpdateUserRequest = Partial<UpdateUserRequest>;
 
 export interface ApiError {
   detail: string;

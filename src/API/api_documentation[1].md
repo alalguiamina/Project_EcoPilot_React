@@ -1,6 +1,7 @@
 # Documentation API Backend - Guide Frontend
 
 ## 📋 Table des matières
+
 - [Authentification](#authentification)
 - [Gestion des utilisateurs](#gestion-des-utilisateurs)
 - [Gestion des sites](#gestion-des-sites)
@@ -12,9 +13,11 @@
 ## 🔐 Authentification
 
 ### Base URL
+
 Toutes les requêtes doivent être envoyées à l'URL de base de l'API.
 
 ### Header d'authentification
+
 **Tous les endpoints (sauf login) nécessitent le token JWT dans le header :**
 
 ```http
@@ -25,11 +28,13 @@ Content-Type: application/json
 ---
 
 ### 1. Login
+
 **Endpoint:** `POST /api-auth/login/`
 
 **Description:** Connexion d'un utilisateur existant.
 
 **Body (JSON):**
+
 ```json
 {
   "username": "nom_utilisateur",
@@ -38,6 +43,7 @@ Content-Type: application/json
 ```
 
 **Réponse succès (200):**
+
 ```json
 {
   "access": "eyJ0eXAiOiJKV1QiLCJhbGc...",
@@ -48,11 +54,13 @@ Content-Type: application/json
 ---
 
 ### 2. Logout
+
 **Endpoint:** `POST /api-auth/logout/`
 
 **Description:** Déconnexion de l'utilisateur.
 
 **Headers:**
+
 ```http
 Authorization: Bearer <access_token>
 ```
@@ -60,11 +68,13 @@ Authorization: Bearer <access_token>
 ---
 
 ### 3. Obtenir un token
+
 **Endpoint:** `POST /user/token/`
 
 **Description:** Obtenir un nouveau token JWT.
 
 **Body (JSON):**
+
 ```json
 {
   "username": "nom_utilisateur",
@@ -73,6 +83,7 @@ Authorization: Bearer <access_token>
 ```
 
 **Réponse succès (200):**
+
 ```json
 {
   "access": "eyJ0eXAiOiJKV1QiLCJhbGc...",
@@ -83,11 +94,13 @@ Authorization: Bearer <access_token>
 ---
 
 ### 4. Rafraîchir le token
+
 **Endpoint:** `POST /user/token/refresh/`
 
 **Description:** Rafraîchir le token d'accès avec le refresh token.
 
 **Body (JSON):**
+
 ```json
 {
   "refresh": "eyJ0eXAiOiJKV1QiLCJhbGc..."
@@ -95,6 +108,7 @@ Authorization: Bearer <access_token>
 ```
 
 **Réponse succès (200):**
+
 ```json
 {
   "access": "eyJ0eXAiOiJKV1QiLCJhbGc..."
@@ -106,17 +120,20 @@ Authorization: Bearer <access_token>
 ## 👤 Gestion des utilisateurs
 
 ### 5. Créer un utilisateur
+
 **Endpoint:** `POST /user/register/`
 
 **Description:** Créer un nouveau compte utilisateur (nécessite authentification).
 
 **Headers:**
+
 ```http
 Authorization: Bearer <access_token>
 Content-Type: application/json
 ```
 
 **Body (JSON):**
+
 ```json
 {
   "username": "nouveau_user",
@@ -128,15 +145,18 @@ Content-Type: application/json
 ```
 
 **Champs obligatoires:**
+
 - `username` (string)
 - `password` (string)
 - `role` (string) - Valeurs possibles : `"admin"`, `"superuser"`, `"user"`, `"agent"`
 - `sites` (array d'integers) - IDs des sites associés
 
 **Champs optionnels:**
+
 - `email` (string)
 
 **Réponse succès (201):**
+
 ```json
 {
   "message": "Utilisateur créé avec succès"
@@ -146,16 +166,19 @@ Content-Type: application/json
 ---
 
 ### 6. Profil utilisateur
+
 **Endpoint:** `GET /user/profile/`
 
 **Description:** Récupérer le profil de l'utilisateur connecté.
 
 **Headers:**
+
 ```http
 Authorization: Bearer <access_token>
 ```
 
 **Réponse succès (200):**
+
 ```json
 {
   "id": 1,
@@ -180,6 +203,7 @@ Authorization: Bearer <access_token>
 ## 🏢 Gestion des sites
 
 ### 7. Créer un site
+
 **Endpoint:** `POST /user/site/register/`
 
 **Description:** Créer un nouveau site (réservé aux administrateurs).
@@ -187,12 +211,14 @@ Authorization: Bearer <access_token>
 **Permission:** Rôle `admin` requis
 
 **Headers:**
+
 ```http
 Authorization: Bearer <access_token>
 Content-Type: application/json
 ```
 
 **Body (JSON):**
+
 ```json
 {
   "nom": "Nom du site"
@@ -200,6 +226,7 @@ Content-Type: application/json
 ```
 
 **Réponse succès (201):**
+
 ```json
 {
   "message": "Site créé avec succès",
@@ -213,22 +240,26 @@ Content-Type: application/json
 ## 📊 Saisie des données
 
 ### 8. Énergies
+
 **Endpoint:** `/core/energies/`
 
 **Description:** Gestion des données énergétiques (voir fichier Excel pour la structure des données).
 
 **Méthodes supportées:**
+
 - `POST` - Créer une nouvelle entrée
 - `GET` - Lister les entrées
 - `PATCH` - Valider une entrée existante
 
 **Headers:**
+
 ```http
 Authorization: Bearer <access_token>
 Content-Type: application/json
 ```
 
 **Exemple POST:**
+
 ```json
 {
   // Structure selon le fichier Excel partagé
@@ -238,22 +269,26 @@ Content-Type: application/json
 ---
 
 ### 9. Eaux
+
 **Endpoint:** `/core/eaux/`
 
 **Description:** Gestion des données sur l'eau (voir fichier Excel pour la structure des données).
 
 **Méthodes supportées:**
+
 - `POST` - Créer une nouvelle entrée
 - `GET` - Lister les entrées
 - `PATCH` - Valider une entrée existante
 
 **Headers:**
+
 ```http
 Authorization: Bearer <access_token>
 Content-Type: application/json
 ```
 
 **Exemple POST:**
+
 ```json
 {
   // Structure selon le fichier Excel partagé
@@ -263,22 +298,26 @@ Content-Type: application/json
 ---
 
 ### 10. Déchets
+
 **Endpoint:** `/core/dechets/`
 
 **Description:** Gestion des données sur les déchets (voir fichier Excel pour la structure des données).
 
 **Méthodes supportées:**
+
 - `POST` - Créer une nouvelle entrée
 - `GET` - Lister les entrées
 - `PATCH` - Valider une entrée existante
 
 **Headers:**
+
 ```http
 Authorization: Bearer <access_token>
 Content-Type: application/json
 ```
 
 **Exemple POST:**
+
 ```json
 {
   // Structure selon le fichier Excel partagé
@@ -289,17 +328,18 @@ Content-Type: application/json
 
 ## ⚠️ Codes d'erreur
 
-| Code | Signification | Description |
-|------|---------------|-------------|
-| 200 | OK | Requête réussie |
-| 201 | Created | Ressource créée avec succès |
-| 400 | Bad Request | Données invalides ou manquantes |
-| 401 | Unauthorized | Token manquant ou invalide |
-| 403 | Forbidden | Permissions insuffisantes |
-| 404 | Not Found | Ressource introuvable |
-| 500 | Internal Server Error | Erreur serveur |
+| Code | Signification         | Description                     |
+| ---- | --------------------- | ------------------------------- |
+| 200  | OK                    | Requête réussie                 |
+| 201  | Created               | Ressource créée avec succès     |
+| 400  | Bad Request           | Données invalides ou manquantes |
+| 401  | Unauthorized          | Token manquant ou invalide      |
+| 403  | Forbidden             | Permissions insuffisantes       |
+| 404  | Not Found             | Ressource introuvable           |
+| 500  | Internal Server Error | Erreur serveur                  |
 
 **Format des erreurs:**
+
 ```json
 {
   "error": "Description de l'erreur",

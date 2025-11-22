@@ -1,6 +1,11 @@
-import { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import { User } from "App";
+import { useEffect, useState } from "react";
+import { Navigate } from "react-router-dom";
+// import default export from jwt-decode
+import { jwtDecode } from "jwt-decode";
+import api from "../../api";
+// use the same keys your auth hook stores (authToken / refreshToken)
+import { REFRESH_TOKEN, ACCESS_TOKEN } from "../../constants";
+import type { User } from "../../App";
 
 type ProtectedRouteProps = {
   user: User | null;
@@ -13,25 +18,89 @@ const ProtectedRoute = ({
   requiredRole,
   children,
 }: ProtectedRouteProps) => {
-  const navigate = useNavigate();
+  const [isAuthorized, setIsAuthorized] = useState<boolean | null>(null);
 
   useEffect(() => {
-    // Redirect if not logged in
-    if (!user) {
-      navigate("/");
+    if (user) {
+      if (requiredRole && user.role !== requiredRole) {
+        setIsAuthorized(false);
+      } else {
+        setIsAuthorized(true);
+      }
       return;
     }
 
-    // Redirect if role doesn't match
-    if (requiredRole && user.role !== requiredRole) {
-      navigate("/");
+    const runAuth = async () => {
+      try {
+        await auth();
+      } catch {
+        setIsAuthorized(false);
+      }
+    };
+
+    runAuth();
+  }, [user, requiredRole]);
+
+  const refreshToken = async () => {
+    // use same storage key as your auth hook (fallback to constant if defined)
+    const refresh =
+      localStorage.getItem(REFRESH_TOKEN) ??
+      localStorage.getItem("refreshToken");
+    if (!refresh) {
+      setIsAuthorized(false);
+      return;
     }
-  }, [user, requiredRole, navigate]);
 
-  // While redirecting or unauthorized, render nothing
-  if (!user || (requiredRole && user.role !== requiredRole)) return null;
+    try {
+      // use the refresh endpoint that your backend exposes
+      const res = await api.post("/token/refresh/", {
+        refresh,
+      });
 
-  // Authorized → render the protected content
+      if (res.status === 200 && res.data?.access) {
+        // store under the same key your auth flow uses
+        localStorage.setItem(ACCESS_TOKEN ?? "authToken", res.data.access);
+        setIsAuthorized(true);
+      } else {
+        setIsAuthorized(false);
+      }
+    } catch (error) {
+      console.error("refreshToken error", error);
+      setIsAuthorized(false);
+    }
+  };
+
+  const auth = async () => {
+    const token =
+      localStorage.getItem(ACCESS_TOKEN) ??
+      localStorage.getItem("authToken") ??
+      null;
+
+    if (!token) {
+      setIsAuthorized(false);
+      return;
+    }
+
+    try {
+      const decoded: any = jwtDecode(token);
+      const tokenExpiration = decoded?.exp ?? 0;
+      const now = Date.now() / 1000;
+
+      if (tokenExpiration < now) {
+        await refreshToken();
+      } else {
+        setIsAuthorized(true);
+      }
+    } catch (err) {
+      console.error("auth decode error", err);
+      await refreshToken();
+    }
+  };
+
+  if (isAuthorized === null) return <div>Loading...</div>;
+
+  if (!isAuthorized) return <Navigate to="/" replace />;
+
   return children;
 };
 

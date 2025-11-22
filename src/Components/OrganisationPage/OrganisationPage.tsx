@@ -1,32 +1,51 @@
-import { useState } from "react";
+import React, { useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
+import { usePageTitle } from "../../hooks/usePageTitle";
+import UserManager from "../UserManager";
+import AddUserDialog from "../AddUserDialog";
+import EditUserDialog from "../EditUserDialog";
+import {
+  useGetUsers,
+  useCreateUser,
+  usePartialUpdateUser,
+  useDeleteUser,
+  useGetSites,
+  useCreateSite,
+} from "../../hooks";
+import type {
+  Site,
+  SiteGroup,
+  UserData,
+  NewUser,
+} from "../../types/organisation";
+import type {
+  User as BackendUser,
+  CreateUserRequest,
+  PartialUpdateUserRequest,
+} from "../../types/user";
 import "./OrganisationPage.css";
 import { Building2, MapPin, Plus, Users, X } from "lucide-react";
-import { User } from "App";
 import Sidebar from "Components/Sidebar/Sidebar";
 import Topbar from "Components/Topbar/Topbar";
-import { usePageTitle } from "hooks/usePageTitle";
 import { EntityManager } from "Components/EntityManager";
-import { UserManager } from "Components/UserManager";
 import { ExpandablePanel } from "Components/ExpandablePanel";
-import { AddUserDialog } from "Components/AddUserDialog";
 import { createEntityFormatter } from "Utils/formatter";
-
-import { Site, UserData, SiteGroup, NewUser } from "types/organisation";
 import AddSiteGroupDialog from "Components/AddSiteGroupDialog";
-import EditUserDialog from "Components/EditUserDialog";
+import useDeleteSite from "hooks/useDeleteSite";
 
 interface OrganisationPageProps {
-  user: User;
+  user: BackendUser; // current logged-in user (do not shadow with other vars)
 }
 
-const OrganisationPage = ({ user }: OrganisationPageProps) => {
+const OrganisationPage = ({ user: currentUser }: OrganisationPageProps) => {
   const navigate = useNavigate();
   const handleLogout = () => navigate("/");
   const pageTitle = usePageTitle();
   const topbarProps = {
     title: pageTitle,
-    userName: user.first_name || "User",
+    userName:
+      (currentUser && (currentUser.first_name || currentUser.username)) ||
+      "User",
     onLogout: handleLogout,
   };
 
@@ -35,35 +54,14 @@ const OrganisationPage = ({ user }: OrganisationPageProps) => {
     null,
   );
 
-  // Sites state
-  const [sites, setSites] = useState<Site[]>([
-    {
-      id: 1,
-      name: "Site Berkane",
-      location: "Berkane, Oriental",
-      surface: "150 ha",
-    },
-    {
-      id: 2,
-      name: "Site Meknès",
-      location: "Meknès, Fès-Meknès",
-      surface: "220 ha",
-    },
-    {
-      id: 3,
-      name: "Site Agadir",
-      location: "Agadir, Souss-Massa",
-      surface: "180 ha",
-    },
-  ]);
-  const [newSite, setNewSite] = useState({
-    name: "",
-    location: "",
-    surface: "",
-  });
+  // Sites (still local/static for now — you can fetch sites similarly later)
+  const { data: sites = [] } = useGetSites();
+  const { data: siteGroups = [] } = useGetSites(); // kept if you still need groups
+  const createSite = useCreateSite();
+  // keep deleteSiteGroup if you still delete groups elsewhere
+  const deleteSiteGroup = useDeleteSite();
 
-  const [siteGroups, setSiteGroups] = useState<SiteGroup[]>([]);
-
+  // keep local newGroup state for dialog inputs
   const [newGroup, setNewGroup] = useState<SiteGroup>({
     name: "",
     description: "",
@@ -71,103 +69,21 @@ const OrganisationPage = ({ user }: OrganisationPageProps) => {
     siteId: 0,
     members: [],
   });
-
   const [isAddGroupOpen, setIsAddGroupOpen] = useState(false);
 
-  // Users state
-  const [users, setUsers] = useState<UserData[]>([
-    {
-      id: 1,
-      username: "jdupont",
-      firstName: "Jean",
-      lastName: "Dupont",
-      email: "j.dupont@lda.ma",
-      site: "Site Berkane",
-      role: "Admin",
-    },
-    {
-      id: 2,
-      username: "mmartin",
-      firstName: "Marie",
-      lastName: "Martin",
-      email: "m.martin@lda.ma",
-      site: "Site Meknès",
-      role: "Super User",
-    },
-    {
-      id: 3,
-      username: "achami",
-      firstName: "Ahmed",
-      lastName: "Chami",
-      email: "a.chami@lda.ma",
-      site: "Site Agadir",
-      role: "Super User",
-    },
-    {
-      id: 4,
-      username: "sbennani",
-      firstName: "Samira",
-      lastName: "Bennani",
-      email: "s.bennani@lda.ma",
-      site: "Site Berkane",
-      role: "User",
-    },
-    {
-      id: 5,
-      username: "krahmani",
-      firstName: "Karim",
-      lastName: "Rahmani",
-      email: "k.rahmani@lda.ma",
-      site: "Site Meknès",
-      role: "User",
-    },
-    {
-      id: 6,
-      username: "fzaidi",
-      firstName: "Fatima",
-      lastName: "Zaidi",
-      email: "f.zaidi@lda.ma",
-      site: "Site Agadir",
-      role: "User",
-    },
-    {
-      id: 7,
-      username: "hbenali",
-      firstName: "Hassan",
-      lastName: "Benali",
-      email: "h.benali@lda.ma",
-      site: "Site Meknès",
-      role: "Agent de saisie",
-    },
-    {
-      id: 8,
-      username: "lchoukri",
-      firstName: "Laila",
-      lastName: "Choukri",
-      email: "l.choukri@lda.ma",
-      site: "Site Berkane",
-      role: "Agent de saisie",
-    },
-    {
-      id: 9,
-      username: "yhamdi",
-      firstName: "Youssef",
-      lastName: "Hamdi",
-      email: "y.hamdi@lda.ma",
-      site: "Site Agadir",
-      role: "Agent de saisie",
-    },
-    {
-      id: 10,
-      username: "sbelkadi",
-      firstName: "Sara",
-      lastName: "Belkadi",
-      email: "s.belkadi@lda.ma",
-      site: "Site Meknès",
-      role: "Agent de saisie",
-    },
-  ]);
-  const [newUser, setNewUser] = useState({
+  // --- USERS: now driven by backend hooks (no local hardcoded users) ---
+  const { data: backendUsers = [], isLoading: usersLoading } = useGetUsers();
+  const createUser = useCreateUser();
+  const partialUpdateUser = usePartialUpdateUser();
+  const deleteUser = useDeleteUser();
+
+  // UI state
+  const [searchQuery, setSearchQuery] = useState("");
+  const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+
+  // UI user form state (for Add)
+  const [newUser, setNewUser] = useState<NewUser>({
     username: "",
     firstName: "",
     lastName: "",
@@ -177,87 +93,199 @@ const OrganisationPage = ({ user }: OrganisationPageProps) => {
     role: "User",
   });
 
-  const [searchQuery, setSearchQuery] = useState("");
-  const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
-
+  // Currently edited user in UI shape
   const [userBeingEdited, setUserBeingEdited] = useState<UserData | null>(null);
-  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
-  // Tabs state
 
-  // Filter users based on search
-  const filteredUsers = users.filter(
-    (user) =>
-      user.username.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      user.firstName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      user.lastName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      user.email.toLowerCase().includes(searchQuery.toLowerCase()),
+  // ROLE mapping between UI labels and backend values
+  const uiRoleToBackend = (r: string) => {
+    switch (r) {
+      case "Admin":
+        return "admin";
+      case "Super User":
+        return "super_user";
+      case "Agent de saisie":
+        return "agent";
+      default:
+        return "user";
+    }
+  };
+  const backendRoleToUI = (r: string) => {
+    switch (r) {
+      case "admin":
+        return "Admin";
+      case "super_user":
+        return "Super User";
+      case "agent":
+        return "Agent de saisie";
+      default:
+        return "User";
+    }
+  };
+
+  // Helpers to map site name <-> id
+  const siteNameToId = (name: string) =>
+    sites.find((s) => s.name === name)?.id ?? 0;
+  const siteIdToName = (id?: number) =>
+    sites.find((s) => s.id === id)?.name ?? "";
+
+  // Convert backend user to UI user shape
+  const backendToUI = (u: BackendUser): UserData => ({
+    id: u.id,
+    username: u.username,
+    firstName: (u.first_name as string) || "",
+    lastName: (u.last_name as string) || "",
+    email: u.email || "",
+    site: siteIdToName(u.sites?.[0]), // assume single-site users; show site name or empty
+    role: backendRoleToUI(u.role),
+    password: undefined,
+  });
+
+  // Derived list for UI components
+  const uiUsers = useMemo(
+    () => backendUsers.map(backendToUI),
+    [backendUsers, sites],
   );
 
-  // Add/Edit Site handlers
-  const handleAddSite = () => {
-    if (newSite.name && newSite.location && newSite.surface) {
-      setSites([...sites, { ...newSite, id: Date.now() }]);
-      setNewSite({ name: "", location: "", surface: "" });
+  // Filter users based on search (can reuse existing UserManager filtering but keep this for other uses)
+  const filteredUsers = uiUsers.filter((u) =>
+    [u.username, u.firstName, u.lastName, u.email, u.site, u.role]
+      .join(" ")
+      .toLowerCase()
+      .includes(searchQuery.toLowerCase()),
+  );
+
+  // ---- Handlers that call backend ----
+
+  const handleAddUser = async () => {
+    if (!newUser.username || !newUser.password || !newUser.site) {
+      alert("Please fill required fields (username, password, site).");
+      return;
     }
-  };
+    const siteId = siteNameToId(newUser.site);
+    if (!siteId) {
+      alert("Selected site invalid.");
+      return;
+    }
 
-  const handleDeleteSite = (id: number) => {
-    setSites(sites.filter((site) => site.id !== id));
-  };
+    const payload: CreateUserRequest = {
+      username: newUser.username,
+      password: newUser.password,
+      role: uiRoleToBackend(newUser.role),
+      sites: [siteId],
+    };
 
-  const handleAddGroup = () => {
-    if (!newGroup.name || !newGroup.siteId) return;
-
-    setSiteGroups([...siteGroups, { ...newGroup, id: Date.now() }]);
-
-    setNewGroup({
-      name: "",
-      description: "",
-      type: "Interne",
-      siteId: "",
-      members: [],
+    createUser.mutate(payload, {
+      onSuccess: () => {
+        setNewUser({
+          username: "",
+          firstName: "",
+          lastName: "",
+          email: "",
+          password: "",
+          site: "",
+          role: "user",
+        });
+        setIsAddDialogOpen(false);
+      },
+      onError: (err) => {
+        console.error("Create user failed", err);
+        alert("Failed to create user");
+      },
     });
-
-    setIsAddGroupOpen(false);
   };
-  const formatSiteGroupField = createEntityFormatter(sites, users);
-  const handleEditUser = (user: UserData) => {
-    setUserBeingEdited({ ...user });
+
+  const handleEditUser = (u: UserData) => {
+    // open edit dialog with a cloned UI user object
+    setUserBeingEdited({ ...u });
     setIsEditDialogOpen(true);
   };
-  // Add/Edit User handlers
-  const handleSaveUser = () => {
-    if (userBeingEdited) {
-      // === EDIT MODE ===
-      setUsers(
-        users.map((u) =>
-          u.id === userBeingEdited.id ? { ...newUser, id: u.id } : u,
-        ),
-      );
-    } else {
-      // === ADD MODE ===
-      setUsers([...users, { ...newUser, id: Date.now() }]);
-    }
 
-    // Reset
-    setNewUser({
-      username: "",
-      firstName: "",
-      lastName: "",
-      email: "",
-      password: "",
-      site: "",
-      role: "User",
-    });
+  const handleSaveUser = async () => {
+    if (!userBeingEdited) return;
 
-    setUserBeingEdited(null);
-    setIsAddDialogOpen(false);
-    setIsEditDialogOpen(false);
+    // prepare partial payload using backend field names
+    const siteId = userBeingEdited.site
+      ? siteNameToId(userBeingEdited.site)
+      : undefined;
+    const payload: PartialUpdateUserRequest = {
+      username: userBeingEdited.username,
+      role: uiRoleToBackend(userBeingEdited.role),
+      sites: siteId ? [siteId] : [],
+      email: userBeingEdited.email,
+      first_name: userBeingEdited.firstName,
+      last_name: userBeingEdited.lastName,
+    };
+
+    partialUpdateUser.mutate(
+      { userId: userBeingEdited.id, userData: payload },
+      {
+        onSuccess: () => {
+          setUserBeingEdited(null);
+          setIsEditDialogOpen(false);
+        },
+        onError: (err) => {
+          console.error("Update user failed", err);
+          alert("Failed to update user");
+        },
+      },
+    );
   };
 
   const handleDeleteUser = (id: number) => {
-    setUsers(users.filter((user) => user.id !== id));
+    if (!window.confirm("Supprimer cet utilisateur ?")) return;
+    deleteUser.mutate(id, {
+      onError: (err) => {
+        console.error("Delete user failed", err);
+        alert("Failed to delete user");
+      },
+    });
   };
+
+  // Create an actual Site in backend when dialog saved.
+  const handleAddGroup = () => {
+    if (!newGroup.name) {
+      alert("Please enter a site name");
+      return;
+    }
+
+    const payload = {
+      name: newGroup.name,
+      require_double_validation: ((newGroup as any).validationLevel ?? 0) === 2,
+      config_json: {},
+    };
+
+    createSite.mutate(payload, {
+      onSuccess: () => {
+        setNewGroup({
+          name: "",
+          description: "",
+          type: "Interne",
+          siteId: 0,
+          members: [],
+        });
+        setIsAddGroupOpen(false);
+      },
+      onError: (err: any) => {
+        console.error("Create site failed (mutation error):", err);
+        // err is an Error thrown in hook => show message
+        alert(
+          "Failed to create site: " + (err?.message ?? JSON.stringify(err)),
+        );
+      },
+    });
+  };
+
+  const handleDeleteGroup = (id: number) => {
+    if (!window.confirm("Supprimer ce groupe ?")) return;
+    deleteSiteGroup.mutate(id, {
+      onError: (err: any) => {
+        console.error("Delete group failed", err);
+        alert("Failed to delete group");
+      },
+    });
+  };
+
+  const formatSiteGroupField = createEntityFormatter(sites, uiUsers as any);
 
   const Badge = ({
     children,
@@ -266,8 +294,9 @@ const OrganisationPage = ({ user }: OrganisationPageProps) => {
     children: React.ReactNode;
     className?: string;
   }) => {
-    return <span className={`badge ${className}`.trim()}>{children}</span>;
+    return <span className={`badge ${className}`}>{children}</span>;
   };
+
   const entityConfigs = [
     {
       id: "site-groups",
@@ -283,63 +312,18 @@ const OrganisationPage = ({ user }: OrganisationPageProps) => {
         { key: "siteId", label: "Site", placeholder: "ID du site" },
         { key: "members", label: "Membres", placeholder: "Liste des membres" },
       ],
+      // show site groups if you need them; otherwise you can show `sites` here
       items: siteGroups,
       newItem: newGroup,
       setNewItem: setNewGroup as any,
       onAdd: handleAddGroup,
-      onDelete: (id: number) =>
-        setSiteGroups(siteGroups.filter((g) => g.id !== id)),
+      onDelete: handleDeleteGroup,
     },
   ];
-  const emptyUser: NewUser = {
-    id: 0,
-    username: "",
-    firstName: "",
-    lastName: "",
-    email: "",
-    password: "",
-    site: "",
-    role: "User",
-  };
-
-  // Generic formatter builder for EntityManager
-  function createFormatField({
-    sites,
-    users,
-  }: {
-    sites?: Site[];
-    users?: UserData[];
-  }) {
-    return (key: string, value: any) => {
-      // Convert siteId → site.name
-      if (key === "siteId" && sites) {
-        const site = sites.find((s) => s.id === value);
-        return site ? site.name : "—";
-      }
-
-      // Convert userId → user.role
-      if (key === "userId" && users) {
-        const user = users.find((u) => u.id === value);
-        return user ? user.role : "—";
-      }
-
-      // Convert members[] → roles (comma-separated)
-      if (key === "members" && users && Array.isArray(value)) {
-        return value
-          .map((id) => {
-            const u = users.find((user) => user.id === id);
-            return u ? u.role : "—";
-          })
-          .join(", ");
-      }
-
-      return String(value);
-    };
-  }
 
   return (
     <div className="dashboard-wrapper">
-      <Sidebar user={user} />
+      <Sidebar user={currentUser} />
 
       <div className="dashboard-content">
         <Topbar {...topbarProps} />
@@ -377,7 +361,7 @@ const OrganisationPage = ({ user }: OrganisationPageProps) => {
               description="Administration des comptes utilisateurs et permissions"
               icon={<span className="icon">👥</span>}
               color="purple"
-              metricValue={users.length}
+              metricValue={uiUsers.length}
               metricLabel="Utilisateurs actifs"
               expandedPanel={expandedPanel as string | null}
               setExpandedPanel={
@@ -385,30 +369,12 @@ const OrganisationPage = ({ user }: OrganisationPageProps) => {
               }
             >
               <UserManager
-                users={users}
+                users={filteredUsers}
                 searchQuery={searchQuery}
                 onSearch={setSearchQuery}
-                onAdd={() => {
-                  // OPEN ADD DIALOG
-                  setNewUser({
-                    username: "",
-                    firstName: "",
-                    lastName: "",
-                    email: "",
-                    password: "",
-                    site: "",
-                    role: "User",
-                  });
-                  setIsAddDialogOpen(true);
-                  setUserBeingEdited(null);
-                }}
-                onEdit={(user) => {
-                  // OPEN EDIT DIALOG
-                  setUserBeingEdited({ ...user });
-                  setIsEditDialogOpen(true);
-                  setIsAddDialogOpen(false);
-                }}
+                onAdd={() => setIsAddDialogOpen(true)}
                 onDelete={handleDeleteUser}
+                onEdit={handleEditUser}
               />
 
               {/* ADD USER DIALOG */}
@@ -417,11 +383,8 @@ const OrganisationPage = ({ user }: OrganisationPageProps) => {
                   isOpen={isAddDialogOpen}
                   newUser={newUser}
                   setNewUser={setNewUser}
-                  sites={sites}
-                  onSave={() => {
-                    setUsers([...users, { ...newUser, id: Date.now() }]);
-                    setIsAddDialogOpen(false);
-                  }}
+                  sites={sites as Site[]}
+                  onSave={handleAddUser}
                   onClose={() => setIsAddDialogOpen(false)}
                 />
               )}
@@ -432,16 +395,8 @@ const OrganisationPage = ({ user }: OrganisationPageProps) => {
                   isOpen={isEditDialogOpen}
                   user={userBeingEdited}
                   setUser={(updated) => setUserBeingEdited(updated)}
-                  sites={sites}
-                  onSave={() => {
-                    setUsers(
-                      users.map((u) =>
-                        u.id === userBeingEdited.id ? userBeingEdited : u,
-                      ),
-                    );
-                    setIsEditDialogOpen(false);
-                    setUserBeingEdited(null);
-                  }}
+                  sites={sites as Site[]}
+                  onSave={handleSaveUser}
                   onClose={() => {
                     setIsEditDialogOpen(false);
                     setUserBeingEdited(null);
@@ -464,6 +419,7 @@ const OrganisationPage = ({ user }: OrganisationPageProps) => {
                 setExpandedPanel as (panel: string | null) => void
               }
             >
+              whe
               <div className="single-panel">
                 {(() => {
                   const cfg = entityConfigs.find(
@@ -473,13 +429,34 @@ const OrganisationPage = ({ user }: OrganisationPageProps) => {
                   return (
                     <>
                       <EntityManager
-                        title={cfg.title}
-                        fields={cfg.fields}
-                        items={cfg.items}
-                        newItem={cfg.newItem as any}
-                        setNewItem={cfg.setNewItem as (item: any) => void}
-                        onAdd={cfg.onAdd}
-                        onDelete={cfg.onDelete}
+                        title="Sites (backend)"
+                        fields={[
+                          {
+                            key: "name" as any,
+                            label: "Nom",
+                            placeholder: "Nom du site",
+                          },
+                          {
+                            key: "location" as any,
+                            label: "Localisation",
+                            placeholder: "Localisation",
+                          },
+                          {
+                            key: "require_double_validation" as any,
+                            label: "Double Validation",
+                            placeholder: "true/false",
+                          },
+                        ]}
+                        items={sites as any}
+                        newItem={newGroup as any}
+                        setNewItem={(item: any) => setNewGroup(item)}
+                        onAdd={handleAddGroup}
+                        onDelete={(id: number) => {
+                          // optional: implement delete site hook and call it here
+                          alert(
+                            "Delete site not implemented — implement useDeleteSite and wire it.",
+                          );
+                        }}
                         extraActionButton={
                           <button
                             className="btn-primary"
@@ -488,7 +465,15 @@ const OrganisationPage = ({ user }: OrganisationPageProps) => {
                             <Plus className="w-4 h-4 mr-2" /> Ajouter
                           </button>
                         }
-                        formatField={formatSiteGroupField}
+                        formatField={(k, v) =>
+                          k === ("require_double_validation" as any)
+                            ? v
+                              ? "Oui"
+                              : "Non"
+                            : k === ("location" as any)
+                              ? String(v || "")
+                              : String(v)
+                        }
                       />
 
                       {isAddGroupOpen && (
@@ -496,8 +481,7 @@ const OrganisationPage = ({ user }: OrganisationPageProps) => {
                           isOpen={isAddGroupOpen}
                           newGroup={newGroup}
                           setNewGroup={setNewGroup}
-                          sites={sites}
-                          people={users}
+                          people={uiUsers}
                           onAddGroup={handleAddGroup}
                           onClose={() => setIsAddGroupOpen(false)}
                         />

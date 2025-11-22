@@ -15,18 +15,6 @@ export interface SiteGroup {
   members: number[];
 }
 
-export interface Domaine {
-  id?: number;
-  name: string;
-  type: string;
-}
-
-export interface BusinessUnit {
-  id?: number;
-  name: string;
-  description: string;
-}
-
 export interface UserData {
   id: number;
   username: string;
@@ -34,7 +22,7 @@ export interface UserData {
   lastName: string;
   email: string;
   site: string;
-
+  password?: string;
   role: string;
 }
 export interface NewUser {

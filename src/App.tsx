@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   BrowserRouter as Router,
   Routes,
@@ -6,106 +6,151 @@ import {
   Navigate,
 } from "react-router-dom";
 import "./App.css";
-import { Login } from "./Components/Login/Login";
+
 import Dashboard from "./Components/Dashboard/Dashboard";
 import DataEntryPage from "./Components/DataEntryPage/DataEntryPage";
 import CarbonFootprintPage from "./Components/CarbonFootprintPage/CarbonFootprintPage";
 import ESGIndicatorsPage from "./Components/ESGIndicatorsPage/ESGIndicatorsPage";
 import ProtectedRoute from "./Components/ProtectedRoute/ProtectedRoute";
 import OrganisationPage from "Components/OrganisationPage/OrganisationPage";
+import { QueryClientProvider } from "@tanstack/react-query";
+import { useAuthToken } from "./hooks/useAuthToken";
+import { useGetCurrentUser } from "./hooks";
+import { ACCESS_TOKEN, REFRESH_TOKEN } from "./constants";
+import type { User as BackendUser } from "./types/user";
 import { CanevasPage } from "Components/DataEntryPage/CanevasPage";
 import { ValidationPage } from "Components/DataEntryPage/ValidationPage";
-export type UserRole = "Agent" | "User" | "SuperUser" | "Admin";
+import Login from "Components/Login/Login";
+import Sidebar from "./Components/Sidebar/Sidebar";
 
-export type User = {
-  role: UserRole;
-  first_name: string;
-  last_name: string;
-  email: string;
-  password: string;
-  username: string;
-  site: string;
-};
+export type UserRole = "agent" | "user" | "super_user" | "admin";
 
-const App = () => {
-  const [user] = useState<User>({
-    role: "Admin",
-    first_name: "Amina",
-    last_name: "Alalgui",
-    username: "Amina Alalgui",
-    email: "amina@example.com",
-    password: "1234",
-    site: "Settat - Ferme Doukkala",
-  });
+// Replace the local User shape with an alias to the backend type
+export type User = BackendUser;
+
+function App() {
+  const [user, setUser] = useState<BackendUser | null>(null);
+
+  const loginMutation = useAuthToken();
+
+  const currentUserQuery = useGetCurrentUser({ enabled: false });
+
+  // when current-user query returns, store it in App state
+  useEffect(() => {
+    if (currentUserQuery.data) {
+      setUser(currentUserQuery.data);
+    }
+  }, [currentUserQuery.data]);
+
+  // on startup, if token exists try to load user
+  useEffect(() => {
+    const token =
+      localStorage.getItem(ACCESS_TOKEN) ?? localStorage.getItem("authToken");
+    if (token) {
+      currentUserQuery.refetch().catch(() => setUser(null));
+    }
+  }, []); // run once
+
+  const handleLogin = async (username: string, password: string) => {
+    try {
+      const resp = await loginMutation.mutateAsync({ username, password });
+      if (resp.access) {
+        localStorage.setItem(ACCESS_TOKEN, resp.access);
+      }
+      if (resp.refresh) {
+        localStorage.setItem(REFRESH_TOKEN, resp.refresh);
+      }
+
+      const userRes = await currentUserQuery.refetch();
+      if (userRes.data) {
+        setUser(userRes.data);
+      }
+    } catch (err: any) {
+      console.error("Login failed:", err);
+      throw err;
+    }
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem(ACCESS_TOKEN);
+    localStorage.removeItem(REFRESH_TOKEN);
+    setUser(null);
+    // optionally navigate to /login
+  };
 
   return (
     <Router basename={process.env.PUBLIC_URL}>
-      <div className="App">
-        <Routes>
-          {/* Page de Login (page d'accueil) */}
+      <div className="App" style={{ display: "flex", minHeight: "100vh" }}>
+        <Sidebar user={user} />
+        <div style={{ flex: 1 }}>
+          <Routes>
+            {/* root: redirect to dashboard if logged, otherwise to login */}
+            <Route
+              path="/"
+              element={
+                user ? (
+                  <Navigate to="/dashboard" replace />
+                ) : (
+                  <Navigate to="/login" replace />
+                )
+              }
+            />
 
-          <Route path="/" element={<Login />} />
-          {/* Page Dashboard */}
+            {/* Login */}
+            <Route path="/login" element={<Login onLogin={handleLogin} />} />
 
-          <Route
-            path="/dashboard"
-            element={
-              <ProtectedRoute user={user}>
-                <Dashboard user={user} />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/data-entry/canevas"
-            element={
-              <ProtectedRoute user={user}>
-                <CanevasPage user={user} />
-              </ProtectedRoute>
-            }
-          />
+            {/* Dashboard */}
+            <Route
+              path="/dashboard"
+              element={
+                <ProtectedRoute user={user}>
+                  <Dashboard user={user as BackendUser} />
+                </ProtectedRoute>
+              }
+            />
 
-          <Route
-            path="/data-entry/validation"
-            element={
-              <ProtectedRoute user={user}>
-                <ValidationPage user={user} />
-              </ProtectedRoute>
-            }
-          />
+            {/* Data Entry base -> render DataEntryPage directly */}
+            <Route
+              path="/data-entry"
+              element={
+                <ProtectedRoute user={user}>
+                  <DataEntryPage user={user as BackendUser} />
+                </ProtectedRoute>
+              }
+            />
 
-          {/* Redirect /data-entry → /data-entry/canevas */}
-          <Route
-            path="/data-entry"
-            element={<Navigate to="/data-entry/canevas" replace />}
-          />
-          <Route
-            path="/carbon"
-            element={
-              <ProtectedRoute user={user}>
-                <CarbonFootprintPage user={user} />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/esg"
-            element={
-              <ProtectedRoute user={user}>
-                <ESGIndicatorsPage user={user} />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/organisation"
-            element={
-              <ProtectedRoute user={user} requiredRole="Admin">
-                <OrganisationPage user={user} />
-              </ProtectedRoute>
-            }
-          />
-        </Routes>
+            {/* Other pages */}
+            <Route
+              path="/carbon"
+              element={
+                <ProtectedRoute user={user}>
+                  <CarbonFootprintPage user={user as BackendUser} />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/esg"
+              element={
+                <ProtectedRoute user={user}>
+                  <ESGIndicatorsPage user={user} />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/organisation"
+              element={
+                <ProtectedRoute user={user} requiredRole="admin">
+                  <OrganisationPage user={user as BackendUser} />
+                </ProtectedRoute>
+              }
+            />
+            {/* fallback: send unknown routes to root */}
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </Routes>
+        </div>
       </div>
     </Router>
   );
-};
+}
 
 export default App;

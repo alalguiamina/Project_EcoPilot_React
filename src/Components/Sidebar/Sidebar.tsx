@@ -1,4 +1,5 @@
-import { useNavigate, useLocation } from "react-router-dom";
+import React from "react";
+import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import "./Sidebar.css";
 import dashboardIcon from "../../Assets/dashboard.png";
 import penIcon from "../../Assets/pen.png";
@@ -9,10 +10,19 @@ import reportIcon from "../../Assets/report.png";
 import settingsIcon from "../../Assets/settings.png";
 import organisationIcon from "../../Assets/organisation.png";
 import logo from "../../Assets/logo.png";
-import { User } from "App";
+import type { User as BackendUser } from "../../types/user";
+
+// minimal, tolerant user shape used by Sidebar so pages can pass their app User
+interface SidebarUser {
+  role?: string;
+  username?: string;
+  first_name?: string;
+  id?: number;
+  sites?: number[];
+}
 
 interface SidebarProps {
-  user: User;
+  user?: SidebarUser | null;
 }
 
 type MenuItem = {
@@ -42,24 +52,7 @@ const Sidebar = ({ user }: SidebarProps) => {
       label: "Saisie de données",
       icon: penIcon,
       color: "#16a34a",
-
-      // SUB-PAGES
-      children: [
-        {
-          id: "canevas",
-          label: "Canevas de Saisie",
-          icon: penIcon,
-          color: "#16a34a",
-          path: "/data-entry/canevas",
-        },
-        {
-          id: "validation",
-          label: "Validation de Données",
-          icon: penIcon,
-          color: "#555",
-          path: "/data-entry/validation",
-        },
-      ],
+      path: "/data-entry",
     },
     {
       id: "carbon",
@@ -108,11 +101,25 @@ const Sidebar = ({ user }: SidebarProps) => {
   ];
 
   // Détermine la page active selon l'URL
-  const isActive = (path: string) => location.pathname === path;
-  // Filter menu items based on user role
+  const isActive = (path?: string) =>
+    path ? location.pathname === path : false;
+
+  // normalize role for checks (tolerant to different shapes / capitalizations)
+  const userRole = (user?.role || "").toString().toLowerCase();
+
+  // Filter menu items based on user role (tolerant to missing user)
   const filteredMenuItems = menuItems.filter(
-    (item) => !item.adminOnly || user.role === "Admin",
+    (item) =>
+      !item.adminOnly ||
+      userRole === "admin" ||
+      userRole === "super_user" || // treat super_user as admin-level
+      userRole === "super user",
   );
+
+  const isAdmin = user?.role === "admin" || user?.role === "super_user";
+
+  const linkClass = ({ isActive }: { isActive: boolean }) =>
+    isActive ? "sidebar-link active" : "sidebar-link";
 
   return (
     <aside className="sidebar">
@@ -122,36 +129,32 @@ const Sidebar = ({ user }: SidebarProps) => {
 
       <nav className="sidebar-nav">
         {filteredMenuItems.map((item) => (
-          <div key={item.id}>
-            {/* Parent button */}
-            <button
-              className="sidebar-item"
-              onClick={() => {
-                if (item.path) navigate(item.path);
-                // If it has children, toggle expand/collapse
+          <button
+            key={item.id}
+            onClick={() => item.path && navigate(item.path)}
+            className={`sidebar-item ${isActive(item.path) ? "active" : ""}`}
+            style={
+              isActive(item.path)
+                ? {
+                    backgroundColor: `${item.color}15`,
+                    color: item.color,
+                  }
+                : {}
+            }
+          >
+            <img
+              src={item.icon}
+              alt={item.label}
+              className="sidebar-icon"
+              style={{
+                width: "24px",
+                height: "24px",
+                objectFit: "contain",
+                marginRight: "8px",
               }}
-            >
-              <img src={item.icon} className="sidebar-icon" />
-              <span>{item.label}</span>
-            </button>
-
-            {/* Sub-items */}
-            {item.children && (
-              <div className="sidebar-submenu">
-                {item.children.map((child) => (
-                  <button
-                    key={child.id}
-                    onClick={() => navigate(child.path!)}
-                    className={`sidebar-item sub ${
-                      isActive(child.path!) ? "active" : ""
-                    }`}
-                  >
-                    <span className="sidebar-label">{child.label}</span>
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
+            />
+            <span className="sidebar-label">{item.label}</span>
+          </button>
         ))}
       </nav>
     </aside>
