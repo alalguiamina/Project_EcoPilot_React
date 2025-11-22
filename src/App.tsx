@@ -4,6 +4,7 @@ import {
   Routes,
   Route,
   Navigate,
+  useLocation,
 } from "react-router-dom";
 import "./App.css";
 
@@ -78,10 +79,18 @@ function App() {
     // optionally navigate to /login
   };
 
+  // render Sidebar only when route is not /login
+  const LocationAwareSidebar = () => {
+    const location = useLocation();
+    // hide sidebar on login page (and any subpath starting with /login)
+    if (location.pathname.startsWith("/login")) return null;
+    return <Sidebar user={user} />;
+  };
+
   return (
     <Router basename={process.env.PUBLIC_URL}>
       <div className="App" style={{ display: "flex", minHeight: "100vh" }}>
-        <Sidebar user={user} />
+        <LocationAwareSidebar />
         <div style={{ flex: 1 }}>
           <Routes>
             {/* root: redirect to dashboard if logged, otherwise to login */}
