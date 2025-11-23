@@ -105,18 +105,22 @@ const Sidebar = ({ user }: SidebarProps) => {
     path ? location.pathname === path : false;
 
   // normalize role for checks (tolerant to different shapes / capitalizations)
-  const userRole = (user?.role || "").toString().toLowerCase();
+  const userRole = (user?.role || "").toString().toLowerCase().trim();
 
-  // Filter menu items based on user role (tolerant to missing user)
+  // Accept common admin role variants
+  const adminRoles = new Set([
+    "admin",
+    "super_user",
+    "superuser",
+    "user",
+    "agent",
+  ]);
+  const isAdmin = adminRoles.has(userRole);
+
+  // Filter menu items based on user role
   const filteredMenuItems = menuItems.filter(
-    (item) =>
-      !item.adminOnly ||
-      userRole === "admin" ||
-      userRole === "super_user" || // treat super_user as admin-level
-      userRole === "super user",
+    (item) => !item.adminOnly || isAdmin,
   );
-
-  const isAdmin = user?.role === "admin" || user?.role === "super_user";
 
   const linkClass = ({ isActive }: { isActive: boolean }) =>
     isActive ? "sidebar-link active" : "sidebar-link";

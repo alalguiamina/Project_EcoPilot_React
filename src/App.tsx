@@ -18,6 +18,7 @@ import { QueryClientProvider } from "@tanstack/react-query";
 import { useAuthToken } from "./hooks/useAuthToken";
 import { useGetCurrentUser } from "./hooks";
 import { ACCESS_TOKEN, REFRESH_TOKEN } from "./constants";
+import { fetchClient } from "./API/fetchClient";
 import type { User as BackendUser } from "./types/user";
 import { CanevasPage } from "Components/DataEntryPage/CanevasPage";
 import { ValidationPage } from "Components/DataEntryPage/ValidationPage";
@@ -52,22 +53,43 @@ function App() {
     }
   }, []); // run once
 
-  const handleLogin = async (username: string, password: string) => {
+  const handleLogin = async (
+    username: string,
+    password: string,
+  ): Promise<void> => {
     try {
+      // perform login (gets tokens)
       const resp = await loginMutation.mutateAsync({ username, password });
-      if (resp.access) {
-        localStorage.setItem(ACCESS_TOKEN, resp.access);
+
+      // store tokens under common keys so fetchClient can pick them up
+      const access = resp.access ?? resp.token ?? resp.access_token;
+      const refresh = resp.refresh ?? resp.refresh_token;
+      if (access) {
+        localStorage.setItem("authToken", access);
+        localStorage.setItem(ACCESS_TOKEN ?? "ACCESS_TOKEN", access);
       }
-      if (resp.refresh) {
-        localStorage.setItem(REFRESH_TOKEN, resp.refresh);
+      if (refresh) {
+        localStorage.setItem("refreshToken", refresh);
+        localStorage.setItem(REFRESH_TOKEN ?? "REFRESH_TOKEN", refresh);
       }
 
-      const userRes = await currentUserQuery.refetch();
-      if (userRes.data) {
-        setUser(userRes.data);
+      // fetch profile directly and set App state (ensures role present)
+      const profileResp = await fetchClient<BackendUser>("/user/users/me/");
+      if (profileResp.data) {
+        setUser(profileResp.data);
+        // optional global debug
+        (window as any).__CURRENT_USER__ = profileResp.data;
+        // no return value: keep signature Promise<void>
+      } else {
+        // fallback: try react-query refetch
+        const userRes = await currentUserQuery.refetch();
+        if (userRes.data) {
+          setUser(userRes.data);
+          (window as any).__CURRENT_USER__ = userRes.data;
+        }
       }
     } catch (err: any) {
-      console.error("Login failed:", err);
+      console.error("Login failed in App.handleLogin:", err);
       throw err;
     }
   };

@@ -2,7 +2,8 @@ import { useQuery } from "@tanstack/react-query";
 import { fetchClient } from "../API/fetchClient";
 import type { User as BackendUser } from "../types/user";
 
-const PROFILE_ENDPOINT = process.env.REACT_APP_PROFILE_ENDPOINT || "/user/me/"; // adjust if your backend uses another path
+const PROFILE_ENDPOINT =
+  process.env.REACT_APP_PROFILE_ENDPOINT || "/user/users/me/"; // adjust if your backend uses another path
 
 export const useGetCurrentUser = (opts?: { enabled?: boolean }) =>
   useQuery({

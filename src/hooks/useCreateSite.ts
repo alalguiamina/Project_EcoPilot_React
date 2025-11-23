@@ -7,16 +7,38 @@ export const useCreateSite = () => {
 
   return useMutation({
     mutationFn: async (siteData: CreateSiteRequest): Promise<Site> => {
-      const response = await fetchClient<Site>(
-        "https://overmuch-pileous-merissa.ngrok-free.dev/user/sites/",
-        {
-          method: "POST",
-          body: siteData,
-        },
-      );
+      // Resolve common field names from callers
+      const resolvedName =
+        (siteData as any).name ??
+        (siteData as any).nom ??
+        (siteData as any).title ??
+        "";
+
+      const body = {
+        name: resolvedName,
+        // preserve explicit options, default to sensible values if missing
+        require_double_validation:
+          (siteData as any).require_double_validation ?? false,
+        config_json: (siteData as any).config_json ?? {},
+      };
+
+      console.log("[useCreateSite] POST /user/sites/ body:", body);
+
+      // Use fetchClient POST (no manual headers here — fetchClient will attach auth)
+      const response = await fetchClient<Site>("/user/sites/", {
+        method: "POST",
+        body,
+      });
+
+      console.log("[useCreateSite] Response ->", response);
 
       if (response.error || !response.data) {
-        throw response.error || new Error("Failed to create site");
+        // throw backend validation/error info
+        const err = response.error ?? {
+          message: "Failed to create site",
+          status: response.status,
+        };
+        throw new Error(JSON.stringify(err));
       }
 
       return response.data;

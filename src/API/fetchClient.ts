@@ -11,68 +11,120 @@ export interface ApiResponse<T> {
   status: number;
 }
 
-// Get the base URL from environment or use a default
-const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || "";
+const API_BASE_URL = (process.env.REACT_APP_API_BASE_URL || "").replace(
+  /\/$/,
+  "",
+);
+const REFRESH_ENDPOINT =
+  process.env.REACT_APP_AUTH_REFRESH_ENDPOINT ?? "/token/refresh/";
 
-/**
- * Custom fetch client for API calls
- * Handles JSON serialization, authentication headers, and error handling
- */
+// helper to attempt refresh using refresh token; returns new access token or null
+async function tryRefreshToken(): Promise<string | null> {
+  const refresh =
+    localStorage.getItem("refreshToken") ||
+    localStorage.getItem("REFRESH_TOKEN") ||
+    localStorage.getItem("refresh_token") ||
+    null;
+  if (!refresh) return null;
+
+  const fullRefreshUrl = `${API_BASE_URL}${REFRESH_ENDPOINT.startsWith("/") ? REFRESH_ENDPOINT : "/" + REFRESH_ENDPOINT}`;
+  try {
+    const r = await fetch(fullRefreshUrl, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+      body: JSON.stringify({ refresh }),
+    });
+    if (!r.ok) return null;
+    const parsed = await r.json();
+    const newAccess = parsed?.access ?? parsed?.access_token ?? null;
+    if (newAccess) {
+      localStorage.setItem("authToken", newAccess);
+      localStorage.setItem("ACCESS_TOKEN", newAccess);
+      return newAccess;
+    }
+    return null;
+  } catch (e) {
+    console.warn("[fetchClient] refresh failed", e);
+    return null;
+  }
+}
+
 export async function fetchClient<T>(
   endpoint: string,
   options: FetchOptions = {},
 ): Promise<ApiResponse<T>> {
-  const token =
-    localStorage.getItem("authToken") || localStorage.getItem("ACCESS_TOKEN");
+  // pick token from common keys
+  let token =
+    localStorage.getItem("authToken") ||
+    localStorage.getItem("ACCESS_TOKEN") ||
+    localStorage.getItem("access_token") ||
+    "";
+
   const headers: Record<string, string> = {
     Accept: "application/json",
     ...(options.headers || {}),
   };
 
-  let body: any = undefined;
-  if (options.body !== undefined && options.body !== null) {
-    // If caller passes FormData, do not set Content-Type and do not stringify
-    if (options.body instanceof FormData) {
-      body = options.body;
-    } else {
-      headers["Content-Type"] = "application/json";
-      body = JSON.stringify(options.body);
-    }
+  if (token && !headers["Authorization"]) {
+    headers["Authorization"] = `Bearer ${token}`;
   }
 
-  if (token) headers["Authorization"] = `Bearer ${token}`;
+  if (options.body !== undefined && !(options.body instanceof FormData)) {
+    headers["Content-Type"] = headers["Content-Type"] ?? "application/json";
+  }
 
-  const API_BASE_URL = (process.env.REACT_APP_API_BASE_URL || "").replace(
-    /\/$/,
-    "",
-  );
   const fullUrl = `${API_BASE_URL}${endpoint.startsWith("/") ? endpoint : "/" + endpoint}`;
 
-  // DEBUG: show final URL and body
-  console.debug(
-    "[fetchClient] Request ->",
-    options.method ?? "GET",
-    fullUrl,
-    "body=",
-    options.body,
-  );
+  console.log("[fetchClient] Request ->", options.method ?? "GET", fullUrl);
+  console.log("[fetchClient] Headers:", headers);
+  console.log("[fetchClient] Body:", options.body);
 
-  try {
-    const resp = await fetch(fullUrl, {
+  const doFetch = async (authHeaders: Record<string, string>) =>
+    fetch(fullUrl, {
       method: options.method ?? "GET",
-      headers,
-      mode: "cors", // allow cross-origin; backend must enable CORS
+      headers: authHeaders,
+      mode: "cors",
       cache: "no-cache",
-      body,
+      body:
+        options.body instanceof FormData
+          ? options.body
+          : options.body
+            ? JSON.stringify(options.body)
+            : undefined,
       credentials: options.credentials,
     });
+
+  try {
+    let resp = await doFetch(headers);
 
     let parsed: any = undefined;
     try {
       parsed = await resp.json();
     } catch (e) {
-      // no json body
       parsed = undefined;
+    }
+
+    // If unauthorized due to invalid token -> try refresh once and retry
+    if (
+      resp.status === 401 &&
+      parsed &&
+      typeof parsed === "object" &&
+      parsed.code === "token_not_valid"
+    ) {
+      console.log("[fetchClient] access invalid, attempting refresh");
+      const newAccess = await tryRefreshToken();
+      if (newAccess) {
+        headers["Authorization"] = `Bearer ${newAccess}`;
+        resp = await doFetch(headers);
+        try {
+          parsed = await resp.json();
+        } catch (e) {
+          parsed = undefined;
+        }
+      }
     }
 
     if (!resp.ok) {
@@ -88,13 +140,12 @@ export async function fetchClient<T>(
       };
     }
 
-    console.debug("[fetchClient] Response OK:", resp.status, parsed);
+    console.log("[fetchClient] Response OK:", resp.status, parsed);
     return {
       data: parsed as T,
       status: resp.status,
     };
   } catch (networkError) {
-    // More explicit error logging to help debug CORS/network problems
     console.error("[fetchClient] Network error ->", networkError);
     return {
       error: { message: "Network error", detail: String(networkError) },
